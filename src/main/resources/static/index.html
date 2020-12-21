@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title>Web eID test page</title>
+    <link
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+            rel="stylesheet"
+            crossorigin="anonymous"
+    />
+    <link
+            href="/css/main.css"
+            rel="stylesheet"
+    />
+</head>
+<body class="m-4">
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="col-xs-12 col-md-8">
+            <h2>Web eID test page</h2>
+            <p>
+                The Web eID project enables usage of European Union electronic identity (eID) smart cards for
+                secure authentication and digital signing of documents on the web using public-key cryptography.
+            </p>
+            <p>Estonian, Finnish, Latvian and Lithuanian eID cards are supported, but only Estonian eID card support
+                is currently enabled in this test service.</p>
+            <p>
+                Technical overview of the solution is available in the project
+                <a href="https://github.com/open-eid/browser-extensions2">system architecture document</a>.
+            </p>
+
+            <hr/>
+            <h4>Testing</h4>
+            <p>
+                Instructions for testing in Firefox, Chrome, Edge or Opera (support for Safari has been already
+                added as well, but it is not yet published):
+            </p>
+            <ol>
+                <li>Currently you need an Estonian eID test card for testing, and
+                    the authentication and signing certificates of the test card must be uploaded to the
+                    <a href="https://demo.sk.ee/upload_cert/index.php">demo.sk.ee OCSP responder database</a>.
+                </li>
+                <li>
+                    Download and install the Web eID native app:
+                    <ul>
+                        <li>
+                            for Ubuntu Linux 20.04 from <a href="/files/web-eid_0.9.3.869_amd64.deb">here</a>
+                        </li>
+                        <li>for macOS 10.13 or later from <a href="/files/web-eid-0.9.3.869.pkg">here</a></li>
+                        <li>for Windows 10 from <a href="/files/web-eid-0.9.3.869.x64.msi">here</a>.</li>
+                    </ul>
+                </li>
+                <li>
+                    The installer will install the browser extension for Chrome and Edge automatically.
+                    The extension must be manually enabled in Edge and may require manual enabling in Chrome
+                    as well under certain circumstances.
+                </li>
+                <li>The installer will also install the browser extension for Firefox automatically in
+                    Ubuntu Linux and macOS. In Windows, the Firefox browser extension has to be manually
+                    installed:
+                    <ul>
+                        <li>download the extension from <a href="/files/firefox/web-eid-webextension-0.9.1.xpi">here</a>
+                        </li>
+                        <li>in Firefox, open the Firefox menu and click <i>Add-ons</i></li>
+                        <li>from the settings cog, open <i>Install Add-on From File</i></li>
+                        <li>browse to and open the XPI file from the location where it was saved</li>
+                        <li>When prompted click <i>Add</i></li>
+                    </ul>
+                </li>
+                <li>
+                    Attach a smart card reader to the computer and insert the eID card into the reader.
+                </li>
+                <li>Click <i>Authenticate</i> below.</li>
+            </ol>
+            <div id="error-message" class="alert alert-danger" style="display: none;" role="alert">
+                <div class="message"></div>
+                <pre class="details"></pre>
+            </div>
+            <p class="text-center p-4">
+                <button id="webeid-auth-button" class="btn btn-info">Authenticate</button>
+            </p>
+
+            <hr/>
+            <h4>Debugging and logs</h4>
+            <ul>
+                <li>
+                    To debug the extension, open the extension page and select
+                    <i>Inspect</i> to open browser developer tools in extension mode. You can examine extension
+                    logs in the <i>Console</i> tab, put breakpoints in extension code in the <i>Debugger</i> tab
+                    and inspect extension network communication in the <i>Network</i> tab.
+                </li>
+                <li>
+                    The native app logs are stored in
+                    <ul>
+                        <li><code>~/.local/share/RIA/web-eid/web-eid.log</code> in Linux</li>
+                        <li><code>~/Library/Application Support/RIA/web-eid/web-eid.log</code> in macOS</li>
+                        <li>
+                            <code>C:/Users/&lt;USER&gt;/AppData/Local/RIA/web-eid/web-eid.log</code> in Windows.
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="eu-logo-fixed" onmouseout="this.style.display = 'none'">
+    <img src="/img/eu-fund-flags.svg" alt="EU fund flags">
+</div>
+
+<script type="module">
+    "use strict";
+    import * as webeid from "/js/web-eid-0.9.0.js";
+    import {hideErrorMessage, showErrorMessage} from "/js/error-message.js";
+
+    hideErrorMessage();
+
+    const authButton = document.querySelector("#webeid-auth-button");
+
+    authButton.addEventListener("click", async () => {
+        const options = {
+            getAuthChallengeUrl: window.location.origin + "/auth/challenge",
+            postAuthTokenUrl: window.location.origin + "/auth/login"
+        };
+
+        hideErrorMessage();
+        authButton.disabled = true;
+
+        try {
+            const response = await webeid.authenticate(options);
+
+            console.log("Authentication successful! Response:", response);
+            window.location.href = "/welcome";
+        } catch (error) {
+            showErrorMessage(error);
+            throw error;
+        } finally {
+            authButton.disabled = false;
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(function () {
+            document.querySelector(".eu-logo-fixed").style.display = 'none'
+        }, 7000)
+    });
+</script>
+</body>
+</html>

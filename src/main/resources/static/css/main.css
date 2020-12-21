@@ -1,0 +1,69 @@
+body {
+    font-family: "Inv Maison Neue","Maison Neue",-apple-system,BlinkMacSystemFont,"Open Sans",open-sans,sans-serif;
+}
+
+.has-advanced-upload {
+    outline: 2px dashed #92b0b3;
+    outline-offset: -10px;
+
+    -webkit-transition: outline-offset .25s ease-in-out, background-color .25s linear;
+    transition: outline-offset .25s ease-in-out, background-color .25s linear;
+}
+
+.adding-signature {
+    height: 14px;
+    color: #000000;
+    font-size: 32px;
+    font-weight: bold;
+    letter-spacing: 0;
+    line-height: 14px;
+}
+
+.welcome-line {
+    height: 40px;
+    color: #000000;
+    font-size: 14px;
+    letter-spacing: 0;
+    line-height: 20px;
+    margin-top: 1rem;
+}
+
+#webeid-logout-button {
+    height: 2.5rem;
+}
+
+#file-drop-area {
+    margin: 0 10rem;
+    padding-top: 2rem;
+    box-sizing: border-box;
+    outline: 2px dashed #92b0b3;
+    outline-offset: -10px;
+    border-radius: 3px;
+    background-color: #F5F5F5;
+}
+
+.is-dragover {
+    background-color: #b7dbde !important;
+    outline-offset: -20px !important;
+    outline-color: #ffffff !important;
+}
+
+#file-name, #file-drop-area, .welcome-line {
+    text-align: center;
+}
+
+.eu-logo-fixed {
+    display: block;
+    position: fixed;
+    background: #fff;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    padding: 5px 20px;
+    text-align: center;
+    z-index: 1000;
+}
+
+.eu-logo-fixed img {
+    height: 86px;
+}

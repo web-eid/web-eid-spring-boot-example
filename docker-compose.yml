@@ -1,0 +1,7 @@
+version: '2'
+services:
+  web-eid-springboot-example:
+    image: web-eid-springboot-example:1.0.0-SNAPSHOT
+    restart: always
+    ports:
+      - '127.0.0.1:8380:8080'

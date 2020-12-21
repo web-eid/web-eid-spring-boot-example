@@ -1,0 +1,11 @@
+spring:
+  profiles: dev
+  servlet:
+    multipart:
+      max-file-size: 5000KB
+      max-request-size: 5000KB
+token:
+  validation:
+    local-origin: "https://web-eid.eu"
+    fingerprint: "11:D8:AE:60:EC:19:10:C7:94:D7:4C:82:C8:0D:96:B2:07:88:B5:6A:D2:65:FF:F9:B5:14:C8:75:F7:90:08:E1"
+    keystore-password: "changeit"
