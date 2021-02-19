@@ -131,8 +131,6 @@ public class ValidationConfiguration {
                 .withNonceCache(nonceCache())
                 .withTrustedCertificateAuthorities(trustedCertificateAuthorities())
                 .withTrustedCertificateAuthorities(initializeTrustedCACertificatesFromKeyStore())
-                // FIXME: investigate why for Idemia test card OcspUtils.ocspUri() -> null so that "User certificate revocation check has failed: The CA/certificate doesn't have an OCSP responder"
-                .withoutUserCertificateRevocationCheckWithOcsp()
                 .build();
     }
 

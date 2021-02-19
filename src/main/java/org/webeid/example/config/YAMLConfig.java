@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableConfigurationProperties
-@ConfigurationProperties(prefix = "token.validation")
+@ConfigurationProperties(prefix = "web-eid-auth-token.validation")
 public class YAMLConfig {
 
     private final String FINGERPRINT_PREFIX = "urn:cert:sha-256:";
@@ -41,6 +41,9 @@ public class YAMLConfig {
     @Value("keystore-password")
     private String keystorePassword;
 
+    @Value("#{new Boolean('${web-eid-auth-token.validation.use-digidoc4j-prod-configuration}'.trim())}")
+    private Boolean useDigiDoc4jProdConfiguration;
+
     public String getLocalOrigin() {
         return localOrigin;
     }
@@ -50,7 +53,7 @@ public class YAMLConfig {
     }
 
     public String getFingerprint() {
-        if(fingerprint != null && !fingerprint.startsWith(FINGERPRINT_PREFIX)) {
+        if (fingerprint != null && !fingerprint.startsWith(FINGERPRINT_PREFIX)) {
             fingerprint = FINGERPRINT_PREFIX + fingerprint.replace(":", "").toLowerCase();
         }
         return fingerprint;
@@ -66,5 +69,13 @@ public class YAMLConfig {
 
     public void setKeystorePassword(String keystorePassword) {
         this.keystorePassword = keystorePassword;
+    }
+
+    public boolean getUseDigiDoc4jProdConfiguration() {
+        return useDigiDoc4jProdConfiguration;
+    }
+
+    public void setUseDigiDoc4jProdConfiguration(boolean useDigiDoc4jProdConfiguration) {
+        this.useDigiDoc4jProdConfiguration = useDigiDoc4jProdConfiguration;
     }
 }
