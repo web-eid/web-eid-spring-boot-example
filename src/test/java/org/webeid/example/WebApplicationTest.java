@@ -22,9 +22,11 @@
 
 package org.webeid.example;
 
-import com.hazelcast.util.Base64;
+import mockit.Mock;
+import mockit.MockUp;
+import org.digidoc4j.impl.asic.AsicSignatureFinalizer;
+import org.digidoc4j.impl.asic.xades.XadesSignature;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,11 +39,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.webeid.example.service.dto.DigestDTO;
 import org.webeid.example.testutil.Dates;
-import org.webeid.example.testutil.FakeNonce;
 import org.webeid.example.testutil.HttpHelper;
 import org.webeid.example.testutil.ObjectMother;
+import org.webeid.security.validator.AuthTokenValidatorData;
+import org.webeid.security.validator.validators.SubjectCertificateNotRevokedValidator;
 
-import java.nio.charset.StandardCharsets;
+import javax.cache.Cache;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -49,13 +53,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 @WebAppConfiguration
 public class WebApplicationTest {
+
+    @Autowired
+    Cache<String, LocalDateTime> cache;
+
     @Autowired
     private WebApplicationContext context;
 
     @Autowired
     private javax.servlet.Filter[] springSecurityFilterChain;
 
-    private static final byte[] TEST_NONCE_BYTES = Base64.decode("a/wAFpMaXojLIaEmeOvviRNoBVqHBM/Mm9JV28ZcaIo=".getBytes(StandardCharsets.UTF_8));
+    private static final String TEST_NONCE = "a/wAFpMaXojLIaEmeOvviRNoBVqHBM/Mm9JV28ZcaIo=";
     private static DefaultMockMvcBuilder mvcBuilder;
 
     @BeforeEach
@@ -76,26 +84,41 @@ public class WebApplicationTest {
         System.out.println(response.getContentAsString());
     }
 
-    @Disabled // FIXME: fix and enable
     @Test
     public void testHappyFlow_LoginUploadPrepareSignDownload() throws Exception {
 
+        // Arrange
+        new MockUp<SubjectCertificateNotRevokedValidator>() {
+            @Mock
+            public void validateCertificateNotRevoked(AuthTokenValidatorData actualTokenData) {
+                // Do not call real OCSP service in tests.
+            }
+        };
+
+        new MockUp<AsicSignatureFinalizer>() {
+            @Mock
+            public void validateOcspResponse(XadesSignature xadesSignature) {
+                // Do not call real OCSP service in tests.
+            }
+        };
+
+        cache.put(TEST_NONCE, LocalDateTime.now().plusMinutes(5));
+
         final MockHttpSession session = new MockHttpSession();
 
-        FakeNonce.setMockedNonce(TEST_NONCE_BYTES);
         Dates.setMockedDate(Dates.create("2020-04-14T13:36:49Z"));
 
+        // Act and assert
         mvcBuilder.build().perform(get("/auth/challenge"));
 
         MockHttpServletResponse response = HttpHelper.login(mvcBuilder, session, ObjectMother.mockAuthToken());
-        assertEquals("{\"sub\":\"JÕEORG,JAAK-KRISTJAN,38001085718\",\"auth\":[\"ROLE_USER\"]}", response.getContentAsString());
+        assertEquals("{\"sub\":\"JAAK-KRISTJAN JÕEORG, PNOEE-38001085718\",\"auth\":[\"ROLE_USER\"]}", response.getContentAsString());
 
         response = HttpHelper.upload(mvcBuilder, session, ObjectMother.mockMultipartFile());
         assertEquals(HttpStatus.OK.value(), response.getStatus());
 
         response = HttpHelper.prepare(mvcBuilder, session, ObjectMother.mockPrepareRequest());
         assertEquals(HttpStatus.OK.value(), response.getStatus());
-
 
         DigestDTO digestDTO = ObjectMother.jsonStringToBean(response.getContentAsString(), DigestDTO.class);
 
