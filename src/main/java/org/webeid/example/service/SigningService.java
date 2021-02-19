@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
+import org.webeid.example.config.YAMLConfig;
 import org.webeid.example.service.dto.CertificateDTO;
 import org.webeid.example.service.dto.DigestDTO;
 import org.webeid.example.service.dto.FileDTO;
@@ -59,9 +60,9 @@ public class SigningService {
 
     ObjectFactory<HttpSession> httpSessionFactory;
 
-    public SigningService(ObjectFactory<HttpSession> httpSessionFactory) {
-        // FIXME: use PROD conf + real OCSP (with IP whitelisting)
-        this.signingConfiguration = Configuration.of(Configuration.Mode.TEST);
+    public SigningService(ObjectFactory<HttpSession> httpSessionFactory, YAMLConfig yamlConfig) {
+        this.signingConfiguration = Configuration.of(yamlConfig.getUseDigiDoc4jProdConfiguration() ?
+                Configuration.Mode.PROD : Configuration.Mode.TEST);
         this.httpSessionFactory = httpSessionFactory;
     }
 
