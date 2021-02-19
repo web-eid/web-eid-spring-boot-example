@@ -57,18 +57,18 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>20.0</version>
+			<version>30.1-jre</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.digidoc4j</groupId>
 			<artifactId>digidoc4j</artifactId>
-			<version>4.0.3</version>
+			<version>4.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.webeid.security</groupId>
 			<artifactId>authtoken-validation</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0</version>
 		</dependency>
 
 		<dependency>
@@ -123,21 +123,11 @@
 
 	<repositories>
 		<repository>
-			<id>gitlab-maven</id>
-			<url>https://gitlab.com/api/v4/projects/19948337/packages/maven</url>
+			<id>github</id>
+			<!-- This URL contains a public personal access token with rights to download packages from GitHub Package Registry.
+			     This is currently the only way for consuming public Maven packages from GitHub Packages, see https://stackoverflow.com/a/64443958/258772. -->
+			<url>https://mrts:ffc291fb68b3d53d4edd14c847edf939fb2a15c5@maven.pkg.github.com/web-eid/web-eid-authtoken-validation-java</url>
 		</repository>
 	</repositories>
-
-	<distributionManagement>
-		<repository>
-			<id>gitlab-maven</id>
-			<url>https://gitlab.com/api/v4/projects/19948337/packages/maven</url>
-		</repository>
-
-		<snapshotRepository>
-			<id>gitlab-maven</id>
-			<url>https://gitlab.com/api/v4/projects/19948337/packages/maven</url>
-		</snapshotRepository>
-	</distributionManagement>
 
 </project>
