@@ -123,10 +123,13 @@
 
 	<repositories>
 		<repository>
+			<id>gitlab</id>
+			<url>https://gitlab.com/api/v4/projects/19948337/packages/maven</url>
+			<!-- Github Packages does not currently support public access, so disabled until it does.
+			     See https://github.community/t/download-from-github-package-registry-without-authentication/14407
 			<id>github</id>
-			<!-- This URL contains a public personal access token with rights to download packages from GitHub Package Registry.
-			     This is currently the only way for consuming public Maven packages from GitHub Packages, see https://stackoverflow.com/a/64443958/258772. -->
-			<url>https://mrts:ffc291fb68b3d53d4edd14c847edf939fb2a15c5@maven.pkg.github.com/web-eid/web-eid-authtoken-validation-java</url>
+			<url>https://maven.pkg.github.com/web-eid/web-eid-authtoken-validation-java</url>
+			-->
 		</repository>
 	</repositories>
 
