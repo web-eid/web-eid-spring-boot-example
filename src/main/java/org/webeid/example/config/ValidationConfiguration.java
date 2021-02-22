@@ -22,6 +22,7 @@
 
 package org.webeid.example.config;
 
+import com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -38,6 +39,8 @@ import javax.cache.CacheManager;
 import javax.cache.Caching;
 import javax.cache.configuration.CompleteConfiguration;
 import javax.cache.configuration.MutableConfiguration;
+import javax.cache.expiry.CreatedExpiryPolicy;
+import javax.cache.expiry.Duration;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -51,12 +54,21 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static javax.cache.configuration.FactoryBuilder.factoryOf;
 
 @Configuration
 public class ValidationConfiguration {
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidationConfiguration.class);
     private static final String CACHE_NAME = "nonceCache";
+    private static final long NONCE_TTL_MINUTES = 5;
+
+    @Bean
+    public CacheManager cacheManager() {
+        return Caching.getCachingProvider(CaffeineCachingProvider.class.getName()).getCacheManager();
+    }
 
     @Bean
     public Cache<String, LocalDateTime> nonceCache() {
@@ -64,8 +76,7 @@ public class ValidationConfiguration {
         Cache<String, LocalDateTime> cache = cacheManager.getCache(CACHE_NAME);
 
         if (cache == null) {
-            CompleteConfiguration<String, LocalDateTime> cacheConfig = new MutableConfiguration<String, LocalDateTime>().setTypes(String.class, LocalDateTime.class);
-            cache = cacheManager.createCache(CACHE_NAME, cacheConfig);
+            cache = createNonceCache(cacheManager);
         }
         return cache;
     }
@@ -73,6 +84,7 @@ public class ValidationConfiguration {
     @Bean
     public NonceGenerator generator() {
         return new NonceGeneratorBuilder()
+                .withNonceTtl(java.time.Duration.ofMinutes(NONCE_TTL_MINUTES))
                 .withNonceCache(nonceCache())
                 .build();
     }
@@ -137,5 +149,13 @@ public class ValidationConfiguration {
     @Bean
     public YAMLConfig yamlConfig() {
         return new YAMLConfig();
+    }
+
+    private Cache<String, LocalDateTime> createNonceCache(CacheManager cacheManager) {
+        CompleteConfiguration<String, LocalDateTime> cacheConfig = new MutableConfiguration<String, LocalDateTime>()
+                .setTypes(String.class, LocalDateTime.class)
+                .setExpiryPolicyFactory(factoryOf(new CreatedExpiryPolicy(
+                        new Duration(TimeUnit.MINUTES, NONCE_TTL_MINUTES + 1))));
+        return cacheManager.createCache(CACHE_NAME, cacheConfig);
     }
 }
