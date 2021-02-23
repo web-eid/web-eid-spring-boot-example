@@ -20,6 +20,7 @@
 		<java.version>1.8</java.version>
 		<maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
 		<caffeine.version>2.8.5</caffeine.version>
+		<webeid.version>1.0.1</webeid.version>
 		<jmockit.version>1.44</jmockit.version>
 	</properties>
 
@@ -80,7 +81,7 @@
 		<dependency>
 			<groupId>org.webeid.security</groupId>
 			<artifactId>authtoken-validation</artifactId>
-			<version>1.0.0</version>
+			<version>${webeid.version}</version>
 		</dependency>
 
 		<dependency>
@@ -137,6 +138,12 @@
 		<repository>
 			<id>gitlab</id>
 			<url>https://gitlab.com/api/v4/projects/19948337/packages/maven</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 			<!-- Github Packages does not currently support public access, so disabled until it does.
 			     See https://github.community/t/download-from-github-package-registry-without-authentication/14407
 			<id>github</id>

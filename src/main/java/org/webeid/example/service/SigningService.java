@@ -61,9 +61,11 @@ public class SigningService {
     ObjectFactory<HttpSession> httpSessionFactory;
 
     public SigningService(ObjectFactory<HttpSession> httpSessionFactory, YAMLConfig yamlConfig) {
-        this.signingConfiguration = Configuration.of(yamlConfig.getUseDigiDoc4jProdConfiguration() ?
-                Configuration.Mode.PROD : Configuration.Mode.TEST);
         this.httpSessionFactory = httpSessionFactory;
+        signingConfiguration = Configuration.of(yamlConfig.getUseDigiDoc4jProdConfiguration() ?
+                Configuration.Mode.PROD : Configuration.Mode.TEST);
+        // Use automatic AIA OCSP URL selection from certificate for signatures.
+        signingConfiguration.setPreferAiaOcsp(true);
     }
 
     private HttpSession currentSession() {
@@ -111,11 +113,12 @@ public class SigningService {
         String containerName = generateContainerName(fileDTO.getName());
         LOG.info("Preparing container for signing for file '{}'", containerName);
 
-        DataToSign dataToSign = SignatureBuilder.
-                aSignature(containerToPrepare).
-                withSigningCertificate(certificate).
-                withSignatureDigestAlgorithm(TokenAlgorithmSupport.determineSignatureDigestAlgorithm(certificate)).
-                buildDataToSign();
+        DataToSign dataToSign = SignatureBuilder
+                .aSignature(containerToPrepare)
+                .withSignatureProfile(SignatureProfile.LT) // AIA OCSP is supported for signatures with LT or LTA profile.
+                .withSigningCertificate(certificate)
+                .withSignatureDigestAlgorithm(TokenAlgorithmSupport.determineSignatureDigestAlgorithm(certificate))
+                .buildDataToSign();
 
         currentSession().setAttribute(SESSION_ATTR_DATA, dataToSign);
 
