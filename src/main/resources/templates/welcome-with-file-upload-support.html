@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <title>Welcome!</title>
+        <link
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+            rel="stylesheet"
+            crossorigin="anonymous"
+        />
+        <link
+            href="/css/main.css"
+            rel="stylesheet"
+        />
+    </head>
+    <body class="m-4">
+        <div class="container">
+            <div class="row justify-content-md-center">
+                <div class="col-xs-12 col-md-8" style="padding-top: 3rem;">
+                    <div style="text-align: center;">
+                        <h2 class="adding-signature">Sign a document</h2>
+                        <p th:text="'Welcome, ' + ${principalName} + '!'" class="welcome-line"></p>
+                    </div>
+                    <div id="file-name"></div>
+                    <p class="text-center p-4">
+                        <button id="webeid-sign-button" class="btn btn-info" style="display: none;">Sign container</button>
+                        <button id="webeid-download-button" class="btn btn-success" style="display: none;">Download container</button>
+                    </p>
+                </div>
+                <button id="webeid-logout-button" class="btn btn-info">Logout</button>
+            </div>
+        </div>
+        <div id="error-message" class="alert alert-danger" style="display: none;" role="alert">
+            <div class="message"></div>
+            <pre class="details"></pre>
+        </div>
+
+        <script type="module">
+            "use strict";
+            import * as webeid from "/js/web-eid-0.9.0.js";
+            import { hideErrorMessage, showErrorMessage } from "/js/error-message.js";
+
+            const signButton = document.querySelector("#webeid-sign-button");
+            const downloadButton = document.querySelector("#webeid-download-button");
+
+            const fileUploadArea = document.querySelector("#file-drop-area");
+            const fileUploadInput = document.querySelector("#webeid-upload-file");
+            const fileNameText = document.querySelector("#file-name");
+
+            fileUploadArea.classList.add( 'has-advanced-upload' );
+
+            ['drag', 'dragstart', 'dragend', 'dragover', 'dragenter', 'dragleave', 'drop'].forEach( function( event )
+            {
+                fileUploadArea.addEventListener( event, function( e )
+                {
+                    // preventing the unwanted behaviours
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+            });
+            ['dragover', 'dragenter'].forEach( function( event )
+            {
+                fileUploadArea.addEventListener( event, function()
+                {
+                    fileUploadArea.classList.add('is-dragover');
+                });
+            });
+            ['dragleave', 'dragend', 'drop'].forEach( function( event )
+            {
+                fileUploadArea.addEventListener( event, function()
+                {
+                    fileUploadArea.classList.remove('is-dragover');
+                });
+            });
+
+            async function uploadFile(file) {
+                const formData  = new FormData();
+                formData.append("file", file)
+
+                const response = await fetch("/sign/upload", {
+                    method: 'POST',
+                    body: formData
+                });
+
+                response.json().then(data => {
+                    signButton.removeAttribute("style");
+                    fileNameText.textContent = "File uploaded: " + data.name;
+                    downloadButton.setAttribute("style", "display: none;");
+                    fileUploadArea.setAttribute("style", "display: none;");
+                });
+            }
+
+            document.querySelector("#webeid-logout-button").addEventListener("click", async () => {
+                await fetch("/logout");
+                window.location.href = "/";
+            });
+
+            downloadButton.addEventListener("click", async () => {
+                window.location.href = "/sign/download";
+            });
+
+            fileUploadInput.addEventListener("input", async () => {
+                const firstFile = fileUploadInput.files[0];
+                await uploadFile(firstFile);
+            });
+
+            signButton.addEventListener("click", async () => {
+                const options = {
+                    postPrepareSigningUrl: window.location.origin + "/sign/prepare",
+                    postFinalizeSigningUrl: window.location.origin + "/sign/sign"
+                };
+
+                hideErrorMessage();
+                signButton.disabled = true;
+
+                try {
+                    const response = await webeid.sign(options);
+                    signButton.setAttribute("style", "display: none;");
+                    downloadButton.removeAttribute("style");
+                    fileNameText.textContent = "Signature added: " + response.body.name;
+                } catch (error) {
+                    showErrorMessage(error);
+                    throw error;
+                } finally {
+                    signButton.disabled = false;
+                }
+            });
+        </script>
+    </body>
+</html>
