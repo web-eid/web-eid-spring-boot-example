@@ -22,46 +22,59 @@
 
 package org.webeid.example.service.dto;
 
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Base64;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 public class FileDTO {
-    private String name;
-    private String base64String;
+    private static final String EXAMPLE_FILENAME = "example-for-signing.txt";
+
+    private final String name;
     private String contentType;
+    private byte[] contentBytes;
+
+    public FileDTO(String name) {
+        this.name = name;
+    }
+
+    public FileDTO(String name, String contentType, byte[] contentBytes) {
+        this.name = name;
+        this.contentType = contentType;
+        this.contentBytes = contentBytes;
+    }
 
     public static FileDTO fromMultipartFile(MultipartFile file) throws IOException {
-        FileDTO dto = new FileDTO();
-        dto.name = Objects.requireNonNull(file.getOriginalFilename());
-        dto.contentType = Objects.requireNonNull(file.getContentType());
-        dto.base64String = Base64.getEncoder().encodeToString(Objects.requireNonNull(file.getBytes()));
-        return dto;
+        return new FileDTO(
+                Objects.requireNonNull(file.getOriginalFilename()),
+                Objects.requireNonNull(file.getContentType()),
+                Objects.requireNonNull(file.getBytes())
+        );
+    }
+
+    public static FileDTO getExampleForSigningFromResources() throws IOException {
+        final URI resourceUri = new ClassPathResource("/static/files/" + EXAMPLE_FILENAME).getURI();
+        return new FileDTO(
+                EXAMPLE_FILENAME,
+                MimeTypeUtils.TEXT_PLAIN_VALUE,
+                Files.readAllBytes(Paths.get(resourceUri))
+        );
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getBase64String() {
-        return base64String;
-    }
-
-    public void setBase64String(String base64String) {
-        this.base64String = base64String;
-    }
-
     public String getContentType() {
         return contentType;
     }
 
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
+    public byte[] getContentBytes() {
+        return contentBytes;
     }
 }

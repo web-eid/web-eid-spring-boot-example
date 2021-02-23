@@ -27,7 +27,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.webeid.example.service.SigningService;
 import org.webeid.example.service.dto.CertificateDTO;
 import org.webeid.example.service.dto.DigestDTO;
@@ -48,13 +47,8 @@ public class SigningController {
         this.signingService = signingService;
     }
 
-    @PostMapping(value = "upload", produces = "application/json")
-    public FileDTO upload(@RequestParam("file") MultipartFile multipartFile) throws IOException {
-        return signingService.createContainer(FileDTO.fromMultipartFile(multipartFile));
-    }
-
     @PostMapping("prepare")
-    public DigestDTO prepare(@RequestBody CertificateDTO data) throws CertificateException, NoSuchAlgorithmException {
+    public DigestDTO prepare(@RequestBody CertificateDTO data) throws CertificateException, NoSuchAlgorithmException, IOException {
         return signingService.prepareContainer(data);
     }
 
@@ -72,4 +66,13 @@ public class SigningController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + signingService.getContainerName())
                 .body(resource);
     }
+
+    /*  Here is an example endpoint that demonstrates how to handle file uploads.
+        See also resources/templates/welcome-with-file-upload-support.html.
+
+    @PostMapping(value = "upload", produces = "application/json")
+    public FileDTO upload(@RequestParam("file") MultipartFile multipartFile) throws IOException {
+        return signingService.createContainer(FileDTO.fromMultipartFile(multipartFile));
+    }
+    */
 }

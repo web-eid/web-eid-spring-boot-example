@@ -114,8 +114,10 @@ public class WebApplicationTest {
         MockHttpServletResponse response = HttpHelper.login(mvcBuilder, session, ObjectMother.mockAuthToken());
         assertEquals("{\"sub\":\"JAAK-KRISTJAN JÕEORG, PNOEE-38001085718\",\"auth\":[\"ROLE_USER\"]}", response.getContentAsString());
 
+        /* Example how to test file upload.
         response = HttpHelper.upload(mvcBuilder, session, ObjectMother.mockMultipartFile());
         assertEquals(HttpStatus.OK.value(), response.getStatus());
+        */
 
         response = HttpHelper.prepare(mvcBuilder, session, ObjectMother.mockPrepareRequest());
         assertEquals(HttpStatus.OK.value(), response.getStatus());
@@ -127,6 +129,6 @@ public class WebApplicationTest {
 
         response = HttpHelper.download(mvcBuilder, session, ObjectMother.mockSignRequest(digestDTO.getHash()));
         assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals("attachment; filename=test-file.asice", response.getHeader("Content-Disposition"));
+        assertEquals("attachment; filename=example-for-signing.asice", response.getHeader("Content-Disposition"));
     }
 }

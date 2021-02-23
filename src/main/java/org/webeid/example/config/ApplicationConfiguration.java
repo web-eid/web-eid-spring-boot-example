@@ -68,6 +68,10 @@ public class ApplicationConfiguration extends WebSecurityConfigurerAdapter imple
             .deleteCookies("JSESSIONID")
             .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
          .and()
+            .headers()
+            .frameOptions()
+            .sameOrigin()
+         .and()
             .csrf()
             .disable();
         // @formatter:on
@@ -76,6 +80,5 @@ public class ApplicationConfiguration extends WebSecurityConfigurerAdapter imple
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/welcome").setViewName("welcome");
     }
-
 
 }

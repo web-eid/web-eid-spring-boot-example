@@ -41,12 +41,10 @@ import org.webeid.example.web.rest.SigningController;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Base64;
 import java.util.Objects;
 
 @Service
@@ -73,48 +71,24 @@ public class SigningService {
     }
 
     /**
-     * Creates a {@link Container} using given name and files.
-     *
-     * @param fileDTO container file
-     * @return new {@link Container} instance
-     */
-    public FileDTO createContainer(FileDTO fileDTO) {
-
-        LOG.info("Creating container for file '{}'", fileDTO.getName());
-        ContainerBuilder builder = ContainerBuilder.aContainer(Container.DocumentType.ASICE);
-
-        byte[] fileBytes = Base64.getDecoder().decode(fileDTO.getBase64String().getBytes(StandardCharsets.UTF_8));
-        DataFile dataFile = new DataFile(fileBytes, fileDTO.getName(), fileDTO.getContentType());
-        builder.withDataFile(dataFile);
-
-        LOG.info("Successfully created container '{}'", fileDTO.getName());
-        Container containerToSign = builder.withConfiguration(signingConfiguration).build();
-
-        currentSession().setAttribute(SESSION_ATTR_CONTAINER, containerToSign);
-        currentSession().setAttribute(SESSION_ATTR_FILE, fileDTO);
-
-        FileDTO newFileDTO = new FileDTO();
-        newFileDTO.setName(fileDTO.getName());
-
-        return newFileDTO;
-    }
-
-    /**
      * Prepares given container {@link Container} for the signature process.
      *
      * @param certificateDTO user's X.509 certificate
      * @return data to be signed
      */
-    public DigestDTO prepareContainer(CertificateDTO certificateDTO) throws CertificateException, NoSuchAlgorithmException {
-        X509Certificate certificate = certificateDTO.toX509Certificate();
-        FileDTO fileDTO = (FileDTO) Objects.requireNonNull(currentSession().getAttribute(SESSION_ATTR_FILE));
-        Container containerToPrepare = (Container) Objects.requireNonNull(currentSession().getAttribute(SESSION_ATTR_CONTAINER));
-
+    public DigestDTO prepareContainer(CertificateDTO certificateDTO) throws CertificateException, NoSuchAlgorithmException, IOException {
+        FileDTO fileDTO = FileDTO.getExampleForSigningFromResources();
+        Container containerToSign = getContainerToSign(fileDTO);
         String containerName = generateContainerName(fileDTO.getName());
+        X509Certificate certificate = certificateDTO.toX509Certificate();
+
+        currentSession().setAttribute(SESSION_ATTR_CONTAINER, containerToSign);
+        currentSession().setAttribute(SESSION_ATTR_FILE, fileDTO);
+
         LOG.info("Preparing container for signing for file '{}'", containerName);
 
         DataToSign dataToSign = SignatureBuilder
-                .aSignature(containerToPrepare)
+                .aSignature(containerToSign)
                 .withSignatureProfile(SignatureProfile.LT) // AIA OCSP is supported for signatures with LT or LTA profile.
                 .withSigningCertificate(certificate)
                 .withSignatureDigestAlgorithm(TokenAlgorithmSupport.determineSignatureDigestAlgorithm(certificate))
@@ -154,19 +128,13 @@ public class SigningService {
             containerToSign.addSignature(signature);
             currentSession().setAttribute(SESSION_ATTR_CONTAINER, containerToSign);
 
-            FileDTO result = new FileDTO();
-            result.setName(generateContainerName(fileDTO.getName()));
-            return result;
+            return new FileDTO(generateContainerName(fileDTO.getName()));
+
         } catch (Exception ex) {
             LOG.error("Signing of container caused an error", ex);
             throw new RuntimeException("Signing of container caused an error");
         }
     }
-
-    private String generateContainerName(String fileName) {
-        return FilenameUtils.removeExtension(fileName) + ".asice";
-    }
-
 
     public String getContainerName() {
         FileDTO fileDTO = (FileDTO) Objects.requireNonNull(currentSession().getAttribute(SESSION_ATTR_FILE));
@@ -177,4 +145,43 @@ public class SigningService {
         Container signedContainer = (Container) Objects.requireNonNull(currentSession().getAttribute(SESSION_ATTR_CONTAINER));
         return new ByteArrayResource(ByteStreams.toByteArray(signedContainer.saveAsStream()));
     }
+
+    private Container getContainerToSign(FileDTO fileDTO) {
+        LOG.info("Creating container for file '{}'", fileDTO.getName());
+
+        final DataFile dataFile = new DataFile(fileDTO.getContentBytes(), fileDTO.getName(), fileDTO.getContentType());
+        return ContainerBuilder
+                .aContainer(Container.DocumentType.ASICE)
+                .withDataFile(dataFile)
+                .withConfiguration(signingConfiguration)
+                .build();
+    }
+
+    private String generateContainerName(String fileName) {
+        return FilenameUtils.removeExtension(fileName) + ".asice";
+    }
+
+    /*  Here is an example method that demonstrates how to handle file uploads.
+     *  See also SigningController.upload().
+     *
+     * Creates a {@link Container} using given name and files.
+     *
+     * @param fileDTO container file
+     * @return new {@link Container} instance
+    public FileDTO createContainer(FileDTO fileDTO) {
+
+        Container containerToSign = getContainerToSign(fileDTO);
+
+        currentSession().setAttribute(SESSION_ATTR_CONTAINER, containerToSign);
+        currentSession().setAttribute(SESSION_ATTR_FILE, fileDTO);
+
+        FileDTO newFileDTO = new FileDTO(fileDTO.getName());
+        return newFileDTO;
+    }
+    */
+    /* When using uploaded files, retrieve file information and container from the session in prepareContainer().
+
+    FileDTO fileDTO = (FileDTO) Objects.requireNonNull(currentSession().getAttribute(SESSION_ATTR_FILE));
+    Container containerToSign = (Container) Objects.requireNonNull(currentSession().getAttribute(SESSION_ATTR_CONTAINER));
+     */
 }
