@@ -17,8 +17,8 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/.m2
-          key: ${{ runner.os }}-m2-v8-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2-v8
+          key: ${{ runner.os }}-m2-v8-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2-v8-${{ secrets.CACHE_VERSION }}
 
       - name: Build
         run: mvn --batch-mode compile

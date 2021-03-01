@@ -29,6 +29,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.webeid.security.exceptions.JceException;
 import org.webeid.security.nonce.NonceGenerator;
 import org.webeid.security.nonce.NonceGeneratorBuilder;
 import org.webeid.security.validator.AuthTokenValidator;
@@ -105,7 +106,6 @@ public class ValidationConfiguration {
             }
 
         } catch (CertificateException | IOException e) {
-            LOG.error("Error initializing trusted CA certificates.", e);
             throw new RuntimeException("Error initializing trusted CA certificates.", e);
         }
 
@@ -126,7 +126,6 @@ public class ValidationConfiguration {
                 caCertificates.add(certificate);
             }
         } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException e) {
-            LOG.error("Error initializing trusted CA certificates from trust store.", e);
             throw new RuntimeException("Error initializing trusted CA certificates from trust store.", e);
         }
 
@@ -136,14 +135,18 @@ public class ValidationConfiguration {
 
     @Bean
     public AuthTokenValidator validator() {
-        return new AuthTokenValidatorBuilder()
-                .withSiteOrigin(URI.create(yamlConfig().getLocalOrigin()))
-                // TODO: it is still open what the validation library should do when cert fingerprint validation is enabled but fingerprint is null (as in Chrome).
-//                .withSiteCertificateSha256Fingerprint(yamlConfig().getFingerprint())
-                .withNonceCache(nonceCache())
-                .withTrustedCertificateAuthorities(trustedCertificateAuthorities())
-                .withTrustedCertificateAuthorities(initializeTrustedCACertificatesFromKeyStore())
-                .build();
+        try {
+            return new AuthTokenValidatorBuilder()
+                    .withSiteOrigin(URI.create(yamlConfig().getLocalOrigin()))
+                    // TODO: it is still open what the validation library should do when cert fingerprint validation is enabled but fingerprint is null (as in Chrome).
+                    // .withSiteCertificateSha256Fingerprint(yamlConfig().getFingerprint())
+                    .withNonceCache(nonceCache())
+                    .withTrustedRootCertificateAuthorities(trustedCertificateAuthorities())
+                    .withTrustedRootCertificateAuthorities(initializeTrustedCACertificatesFromKeyStore())
+                    .build();
+        } catch (JceException e) {
+            throw new RuntimeException("Error building the Web eID auth token validator.", e);
+        }
     }
 
     @Bean
