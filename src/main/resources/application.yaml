@@ -4,6 +4,12 @@ spring:
     multipart:
       max-file-size: 5000KB
       max-request-size: 5000KB
+
+logging:
+  level:
+    org.webeid.security: DEBUG
+    org.webeid.example: DEBUG
+
 web-eid-auth-token:
   validation:
     use-digidoc4j-prod-configuration: true
