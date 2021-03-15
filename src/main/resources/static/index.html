@@ -31,7 +31,7 @@
             </p>
 
             <hr/>
-            <h4>Testing</h4>
+            <h4>Installation and testing</h4>
             <p>
                 Instructions for testing in Firefox, Chrome or Edge (support for Safari has been already
                 added as well, but it is not yet published):
@@ -40,15 +40,24 @@
                 <li>
                     Download and run the Web eID native app and browser extension installer:
                     <ul>
-                        <li>for Ubuntu Linux 20.04 from <a href="/files/web-eid_0.9.4.76_amd64.deb">here</a></li>
-                        <li>for macOS 10.13 or later from <a href="/files/web-eid-0.9.4.76.pkg">here</a></li>
-                        <li>for Windows 10 from <a href="/files/web-eid-0.9.4.76.x64.msi">here</a>.</li>
+                        <li>for Ubuntu Linux 20.04 from <a
+                                href="https://github.com/web-eid/web-eid-app/releases/download/0.9.4-rc1/web-eid_0.9.4.141_amd64.deb">here</a>,
+                            install it with<br><code>sudo apt install ./web-eid_0.9.4.141_amd64.deb</code>
+                        </li>
+                        <li>for macOS 10.13 or later from <a
+                                href="https://github.com/web-eid/web-eid-app/releases/download/0.9.4-rc1/web-eid-0.9.4.141.pkg">here</a>
+                        </li>
+                        <li>for Windows 10 from <a
+                                href="https://github.com/web-eid/web-eid-app/releases/download/0.9.4-rc1/web-eid-0.9.4.141.x64.msi">here</a>.
+                        </li>
                     </ul>
                 </li>
                 <li>
                     The installer will install the browser extension for all supported browsers automatically.
-                    The extension must be manually enabled from the browser extensions management page
-                    and may need browser restart under certain circumstances.
+                    The extension must be manually enabled from either the extension installation pop-up that appears in
+                    the browser
+                    or from the browser extensions management page and may need browser restart under certain
+                    circumstances.
                 </li>
                 <li>
                     Attach a smart card reader to the computer and insert the eID card into the reader.
@@ -62,6 +71,31 @@
             <p class="text-center p-4">
                 <button id="webeid-auth-button" class="btn btn-info">Authenticate</button>
             </p>
+
+            <hr/>
+            <h4>Uninstallation</h4>
+
+            <h5>Ubuntu Linux</h5>
+            <p>Uninstall Web eID with<br>
+                <code>sudo apt purge web-eid</code></p>
+            <p>The uninstaller will remove the browser extension from all supported browsers automatically.</p>
+
+            <h5>macOS</h5>
+            <p>Uninstall Web eID with<br>
+                <code>sudo rm -rf /Applications/Utilities/web-eid.app \</code><br>
+                <code>&nbsp;&nbsp;/Library/Google/Chrome/NativeMessagingHosts/eu.webeid.json \</code><br>
+                <code>&nbsp;&nbsp;/Library/Application\ Support/Mozilla/NativeMessagingHosts/eu.webeid.json \</code><br>
+                <code>&nbsp;&nbsp;/Library/Application\ Support/Google/Chrome/External\
+                    Extensions/ncibgoaomkmdpilpocfeponihegamlic.json</code><br>
+                <code>PLIST=/Library/Preferences/org.mozilla.firefox.plist</code><br>
+                <code>sudo defaults write ${PLIST} ExtensionSettings \</code><br>
+                <code>&nbsp;&nbsp;-dict-add "'{e68418bc-f2b0-4459-a9ea-3e72b6751b07}'" "{ 'installation_mode' =
+                    'blocked'; }"</code>
+            </p>
+
+            <h5>Windows</h5>
+            <p>Uninstall Web eID using <i>Add or remove programs</i>.</p>
+            <p>The uninstaller will remove the browser extension from all supported browsers automatically.</p>
 
             <hr/>
             <h4>Debugging and logs</h4>

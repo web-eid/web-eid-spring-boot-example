@@ -23,8 +23,6 @@
 package org.webeid.example.config;
 
 import com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -62,7 +60,6 @@ import static javax.cache.configuration.FactoryBuilder.factoryOf;
 @Configuration
 public class ValidationConfiguration {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ValidationConfiguration.class);
     private static final String CACHE_NAME = "nonceCache";
     private static final long NONCE_TTL_MINUTES = 5;
 
@@ -73,7 +70,7 @@ public class ValidationConfiguration {
 
     @Bean
     public Cache<String, LocalDateTime> nonceCache() {
-        CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();
+        final CacheManager cacheManager = cacheManager();
         Cache<String, LocalDateTime> cache = cacheManager.getCache(CACHE_NAME);
 
         if (cache == null) {
@@ -91,7 +88,7 @@ public class ValidationConfiguration {
     }
 
     @Bean
-    public X509Certificate[] trustedCertificateAuthorities() {
+    public X509Certificate[] loadTrustedCACertificatesFromResources() {
         List<X509Certificate> caCertificates = new ArrayList<>();
 
         try {
@@ -113,7 +110,7 @@ public class ValidationConfiguration {
     }
 
     @Bean
-    public X509Certificate[] initializeTrustedCACertificatesFromKeyStore() {
+    public X509Certificate[] loadTrustedCACertificatesFromKeyStore() {
         List<X509Certificate> caCertificates = new ArrayList<>();
 
         try (InputStream is = ValidationConfiguration.class.getResourceAsStream("/certs/trusted_certificates.jks")) {
@@ -141,8 +138,8 @@ public class ValidationConfiguration {
                     // TODO: it is still open what the validation library should do when cert fingerprint validation is enabled but fingerprint is null (as in Chrome).
                     // .withSiteCertificateSha256Fingerprint(yamlConfig().getFingerprint())
                     .withNonceCache(nonceCache())
-                    .withTrustedRootCertificateAuthorities(trustedCertificateAuthorities())
-                    .withTrustedRootCertificateAuthorities(initializeTrustedCACertificatesFromKeyStore())
+                    .withTrustedCertificateAuthorities(loadTrustedCACertificatesFromResources())
+                    .withTrustedCertificateAuthorities(loadTrustedCACertificatesFromKeyStore())
                     .build();
         } catch (JceException e) {
             throw new RuntimeException("Error building the Web eID auth token validator.", e);
