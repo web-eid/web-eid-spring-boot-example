@@ -1,6 +1,6 @@
 # Web eID Spring Boot example
 
-![European Regional Development Fund](https://github.com/e-gov/RIHA-Frontend/raw/master/logo/EU/EU.png)
+![European Regional Development Fund](https://github.com/open-eid/DigiDoc4-Client/blob/master/client/images/EL_Regionaalarengu_Fond.png)
 
 Example Spring Boot web application that uses Web eID for strong authentication
 and digital signing with electronic ID smart cards.
