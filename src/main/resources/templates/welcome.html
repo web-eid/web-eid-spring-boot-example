@@ -31,6 +31,10 @@
                 <iframe src="/files/example-for-signing.txt" width="100%" height="200"></iframe>
             </div>
 
+            <div id="error-message" class="alert alert-danger" style="display: none;" role="alert">
+                <div class="message"></div>
+                <pre class="details"></pre>
+            </div>
             <p class="text-center p-4">
                 <button id="webeid-sign-button" class="btn btn-info">Sign document</button>
                 <button id="webeid-download-button" class="btn btn-success" style="display: none;">Download container
@@ -39,10 +43,6 @@
         </div>
         <button id="webeid-logout-button" class="btn btn-info">Logout</button>
     </div>
-</div>
-<div id="error-message" class="alert alert-danger" style="display: none;" role="alert">
-    <div class="message"></div>
-    <pre class="details"></pre>
 </div>
 
 <script type="module">
