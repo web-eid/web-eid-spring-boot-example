@@ -43,31 +43,45 @@
             <hr/>
             <h3><a id="usage"></a>Usage</h3>
             <p>
-                Instructions for installing and testing in Firefox, Chrome or Edge (support for Safari has been already
-                added as well, but it is not yet published):
+                Instructions for installing and testing version 1.0.0-rc1 in Firefox, Chrome, Edge or Safari:
             </p>
             <ol>
                 <li>
                     Download and run the Web eID native app and browser extension installer:
                     <ul>
-                        <li>for Ubuntu Linux 20.04 from <a
-                                href="https://github.com/web-eid/web-eid-app/releases/download/0.9.4/web-eid_0.9.4.141_amd64.deb">here</a>,
+                        <li>for Firefox and Chrome on Ubuntu Linux 20.04 from <a
+                                href="https://github.com/web-eid/web-eid-app/releases/download/1.0.0-rc1/web-eid_1.0.0.354_amd64.deb">here</a>,
                             install it with either the Ubuntu Software Center or from the console with<br>
-                            <code>sudo apt install ./web-eid_0.9.4.141_amd64.deb</code>
+                            <code>sudo apt install ./web-eid_1.0.0.354_amd64.deb</code>
                         </li>
-                        <li>for macOS 10.13 or later from <a
-                                href="https://github.com/web-eid/web-eid-app/releases/download/0.9.4/web-eid-0.9.4.141.pkg">here</a>
+                        <li>on macOS 10.15 or later,
+                            <ul>
+                                <li>
+                                    for Firefox from <a
+                                        href="https://github.com/web-eid/web-eid-app/releases/download/1.0.0-rc1/web-eid-firefox_1.0.0.354.pkg">here</a>,
+                                </li>
+                                <li>
+                                    for Chrome from <a
+                                        href="https://github.com/web-eid/web-eid-app/releases/download/1.0.0-rc1/web-eid-chrome_1.0.0.354.pkg">here</a>;
+                                </li>
+                                <li>
+                                    Safari extension is also available from <a
+                                        href="https://github.com/web-eid/web-eid-app/releases/download/1.0.0-rc1/web-eid-safari_1.0.0.354.pkg">here</a>,
+                                    but it is not yet signed, so it is not currently possible to enable it; a signed
+                                    release will be available shortly.
+                                </li>
+                            </ul>
                         </li>
-                        <li>for Windows 10 from <a
-                                href="https://github.com/web-eid/web-eid-app/releases/download/0.9.4/web-eid-0.9.4.141.x64.msi">here</a>.
+                        <li>for Firefox, Chrome and Edge on Windows 10 (64-bit) from <a
+                                href="https://github.com/web-eid/web-eid-app/releases/download/1.0.0-rc1/web-eid_1.0.0.354.x64.qt.msi">here</a>.
                         </li>
                     </ul>
                 </li>
                 <li>
                     The installer will install the browser extension for all supported browsers automatically.
                     The extension must be manually enabled from either the extension installation pop-up that appears in
-                    the browser
-                    or from the browser extensions management page and may need browser restart under certain
+                    the browser or from the browser extensions management page and may need browser restart under
+                    certain
                     circumstances.
                 </li>
                 <li>
@@ -82,6 +96,9 @@
             </div>
             <p class="text-center p-4">
                 <button id="webeid-auth-button" class="btn btn-info">Authenticate</button>
+            </p>
+
+            <p>The privacy policy of the test service is available <a href="/files/Web eID privacy policy.pdf">here</a>.
             </p>
 
             <hr/>
@@ -116,6 +133,21 @@
                     <i>Inspect</i> to open browser developer tools in extension mode. You can examine extension
                     logs in the <i>Console</i> tab, put breakpoints in extension code in the <i>Debugger</i> tab
                     and inspect extension network communication in the <i>Network</i> tab.
+                </li>
+                <li>
+                    To enable logging in the extension companion native app,
+                    <ul>
+                        <li>in Linux, run the following command in the console:<br>
+                            <code>echo 'logging=true' > ~/.config/RIA/web-eid.conf</code>
+                        </li>
+                        <li>in macOS, run the following command in the console:<br>
+                            <code>defaults write eu.web-eid.web-eid logging true</code>
+                        </li>
+                        <li>in Windows, add the following registry key:<br>
+                            <code>[HKEY_LOCAL_MACHINE\SOFTWARE\RIA\web-eid]</code><br>
+                            <code>"logging"="true"</code>
+                        </li>
+                    </ul>
                 </li>
                 <li>
                     The native app logs are stored in
