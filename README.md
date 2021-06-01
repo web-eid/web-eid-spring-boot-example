@@ -5,6 +5,8 @@
 Example Spring Boot web application that uses Web eID for strong authentication
 and digital signing with electronic ID smart cards.
 
+More information about the Web eID project is available on the project [website](https://web-eid.eu/).
+
 ## Setup
 
 Note that although the browser considers localhost to be a secure context, it does not have a certificate,
