@@ -7,15 +7,68 @@ and digital signing with electronic ID smart cards.
 
 More information about the Web eID project is available on the project [website](https://web-eid.eu/).
 
-## Setup
+## HTTPS support
 
-Note that although the browser considers localhost to be a secure context, it does not have a certificate,
-therefore you need to use e.g. Ngrok.io for local testing.
+There are two ways of adding HTTPS support to a Spring Boot application:
 
-Download ngrok and run locally using two parameters:
-```sh
-ngrok http 8080
-```
+1. enable HTTPS support directly in the bundled Tomcat server by configuring
+   the `server.ssl.*` properties,
+
+2. use a reverse proxy server that handles TLS termination and communicates
+   with the Spring Boot application over a local HTTP socket.
+
+The first approach is straightforward and documented in the [official documentation](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#howto.webserver.configure-ssl).
+
+The second approach, running behind a reverse proxy, is common in enterprise
+deployments and the configuration is more involved. We assume this setup in the
+current project and document it in this section.
+
+Enabling HTTPS support when running behind a reverse proxy server requires
+configuration of both the proxy server and the Spring Boot application.
+
+The proxy server must pass the `Host:` line from the incoming request to the
+proxied application and set the `X-Forwarded-*` headers to inform the
+application that it runs behind a reverse proxy. Here is example configuration
+for the Apache web server:
+
+    <Location />
+        ProxyPreserveHost On
+        ProxyPass http://localhost:8380/
+        ProxyPassReverse http://localhost:8380/
+        RequestHeader set X-Forwarded-Proto https
+        RequestHeader set X-Forwarded-Port 443
+    </Location>
+
+The Spring Boot application turns on proxied HTTPS support in the bundled
+Tomcat web server automatically if it detects the presence of the
+`X-Forwarded-*` headers and the following settings are configured in
+`application.properties`:
+
+    server.forward-headers-strategy=native
+    server.tomcat.remote-ip-header=x-forwarded-for
+    server.tomcat.protocol-header=x-forwarded-proto
+
+These settings are already enabled in the default
+[`application.properties`](src/main/resources/application.properties). See
+chapter
+[9.3.12](https://docs.spring.io/spring-boot/docs/2.2.5.RELEASE/reference/htmlsingle/#howto-use-behind-a-proxy-server)
+and
+[9.14.3](https://docs.spring.io/spring-boot/docs/2.2.5.RELEASE/reference/htmlsingle/#howto-enable-https)
+in the official documentation for further details.
+
+### How to verify that HTTPS is configured properly
+
+When HTTPS support is configured properly, all responses will have the HTTP
+Strict Transport Security (HSTS) header and the `JSESSIONID` session cookie has
+`Secure` attribute set.
+
+### Using a HTTPS proxy during development
+
+Use e.g. [_ngrok_](https://ngrok.com/) during development to get a reverse
+proxy with a trusted HTTPS certificates. Download _ngrok_ and run it locally by
+providing the protocol and Spring Boot application port as follows:
+
+    ngrok http 8080
 
 ## Configuration
 
