@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <meta id="csrftoken" name="csrftoken" th:content="${_csrf.token}"/>
+    <meta id="csrfheadername" name="csrfheadername" th:content="${_csrf.headerName}"/>
+
     <title>Welcome!</title>
     <link
             href="/css/bootstrap.min.css"
@@ -64,10 +68,16 @@
         window.location.href = "/sign/download";
     });
 
+    const csrfToken = document.querySelector('#csrftoken').content;
+    const csrfHeaderName = document.querySelector('#csrfheadername').content;
+
     signButton.addEventListener("click", async () => {
         const options = {
             postPrepareSigningUrl: window.location.origin + "/sign/prepare",
-            postFinalizeSigningUrl: window.location.origin + "/sign/sign"
+            postFinalizeSigningUrl: window.location.origin + "/sign/sign",
+            headers: {
+                [csrfHeaderName]: csrfToken
+            }
         };
 
         hideErrorMessage();

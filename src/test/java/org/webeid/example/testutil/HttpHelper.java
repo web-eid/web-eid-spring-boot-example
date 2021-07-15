@@ -32,6 +32,7 @@ import org.webeid.example.security.dto.AuthTokenDTO;
 import org.webeid.example.service.dto.CertificateDTO;
 import org.webeid.example.service.dto.SignatureDTO;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -43,6 +44,7 @@ public class HttpHelper {
                 .build()
                 .perform(post("/auth/login")
                         .session(session)
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(ObjectMother.toJson(authTokenDTO)))
                 .andReturn()
@@ -68,6 +70,7 @@ public class HttpHelper {
                 .build()
                 .perform(post("/sign/prepare")
                         .session(session)
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(ObjectMother.toJson(certificateDTO)))
                 .andReturn()
@@ -81,6 +84,7 @@ public class HttpHelper {
                 .build()
                 .perform(post("/sign/sign")
                         .session(session)
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(ObjectMother.toJson(signatureDTO)))
                 .andReturn()
