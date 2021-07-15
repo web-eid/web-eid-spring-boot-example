@@ -69,15 +69,12 @@ public class ApplicationConfiguration extends WebSecurityConfigurerAdapter imple
             .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
          .and()
             .headers()
-            .frameOptions()
-            .sameOrigin()
-         .and()
-            .csrf()
-            .disable();
+                .frameOptions().sameOrigin();
         // @formatter:on
     }
 
     public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("index");
         registry.addViewController("/welcome").setViewName("welcome");
     }
 

@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <meta id="csrftoken" name="csrftoken" th:content="${_csrf.token}"/>
+    <meta id="csrfheadername" name="csrfheadername" th:content="${_csrf.headerName}"/>
+
     <title>Web eID: electronic ID smart cards on the Web</title>
     <link
             href="/css/bootstrap.min.css"
@@ -218,10 +222,16 @@
 
     const authButton = document.querySelector("#webeid-auth-button");
 
+    const csrfToken = document.querySelector('#csrftoken').content;
+    const csrfHeaderName = document.querySelector('#csrfheadername').content;
+
     authButton.addEventListener("click", async () => {
         const options = {
             getAuthChallengeUrl: window.location.origin + "/auth/challenge",
-            postAuthTokenUrl: window.location.origin + "/auth/login"
+            postAuthTokenUrl: window.location.origin + "/auth/login",
+            headers: {
+                [csrfHeaderName]: csrfToken
+            }
         };
 
         hideErrorMessage();
