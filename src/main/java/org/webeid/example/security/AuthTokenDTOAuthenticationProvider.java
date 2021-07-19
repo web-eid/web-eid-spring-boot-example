@@ -68,8 +68,8 @@ public class AuthTokenDTOAuthenticationProvider implements AuthenticationProvide
         authorities.add(USER_ROLE);
 
         try {
-            X509Certificate userCertificate = tokenValidator.validate(token);
-            return new PreAuthenticatedAuthenticationToken(getPrincipalFromCertificate(userCertificate), null, authorities);
+            final X509Certificate userCertificate = tokenValidator.validate(token);
+            return WebEidAuthentication.fromCertificate(userCertificate, authorities);
         } catch (TokenValidationException e) {
             LOG.warn("Token validation has failed", e);
             throw new AuthenticationServiceException("Token validation failed: " + e.getMessage());
@@ -85,10 +85,4 @@ public class AuthTokenDTOAuthenticationProvider implements AuthenticationProvide
         return PreAuthenticatedAuthenticationToken.class.equals(authentication);
     }
 
-    // FIXME: create a proper principal object
-    private String getPrincipalFromCertificate(X509Certificate userCertificate) throws CertificateEncodingException {
-        return CertUtil.getSubjectGivenName(userCertificate) + ' ' +
-                CertUtil.getSubjectSurname(userCertificate) + ", " +
-                CertUtil.getSubjectIdCode(userCertificate);
-    }
 }
