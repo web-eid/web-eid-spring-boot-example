@@ -27,6 +27,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.webeid.example.security.WebEidAuthentication;
 import org.webeid.example.service.SigningService;
 import org.webeid.example.service.dto.CertificateDTO;
 import org.webeid.example.service.dto.DigestDTO;
@@ -48,8 +49,8 @@ public class SigningController {
     }
 
     @PostMapping("prepare")
-    public DigestDTO prepare(@RequestBody CertificateDTO data) throws CertificateException, NoSuchAlgorithmException, IOException {
-        return signingService.prepareContainer(data);
+    public DigestDTO prepare(@RequestBody CertificateDTO data, WebEidAuthentication authentication) throws CertificateException, NoSuchAlgorithmException, IOException {
+        return signingService.prepareContainer(data, authentication);
     }
 
     @PostMapping("sign")

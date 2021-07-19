@@ -135,8 +135,6 @@ public class ValidationConfiguration {
         try {
             return new AuthTokenValidatorBuilder()
                     .withSiteOrigin(URI.create(yamlConfig().getLocalOrigin()))
-                    // TODO: it is still open what the validation library should do when cert fingerprint validation is enabled but fingerprint is null (as in Chrome).
-                    // .withSiteCertificateSha256Fingerprint(yamlConfig().getFingerprint())
                     .withNonceCache(nonceCache())
                     .withTrustedCertificateAuthorities(loadTrustedCACertificatesFromResources())
                     .withTrustedCertificateAuthorities(loadTrustedCACertificatesFromKeyStore())

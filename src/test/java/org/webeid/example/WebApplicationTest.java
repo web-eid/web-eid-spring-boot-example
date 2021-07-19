@@ -112,7 +112,7 @@ public class WebApplicationTest {
         mvcBuilder.build().perform(get("/auth/challenge"));
 
         MockHttpServletResponse response = HttpHelper.login(mvcBuilder, session, ObjectMother.mockAuthToken());
-        assertEquals("{\"sub\":\"JAAK-KRISTJAN JÕEORG, PNOEE-38001085718\",\"auth\":[\"ROLE_USER\"]}", response.getContentAsString());
+        assertEquals("{\"sub\":\"JAAK-KRISTJAN JÕEORG\",\"auth\":[\"ROLE_USER\"]}", response.getContentAsString());
 
         /* Example how to test file upload.
         response = HttpHelper.upload(mvcBuilder, session, ObjectMother.mockMultipartFile());

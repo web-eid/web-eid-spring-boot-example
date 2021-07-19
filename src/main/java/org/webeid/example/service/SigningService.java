@@ -32,11 +32,13 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.webeid.example.config.YAMLConfig;
+import org.webeid.example.security.WebEidAuthentication;
 import org.webeid.example.service.dto.CertificateDTO;
 import org.webeid.example.service.dto.DigestDTO;
 import org.webeid.example.service.dto.FileDTO;
 import org.webeid.example.service.dto.SignatureDTO;
 import org.webeid.example.web.rest.SigningController;
+import org.webeid.security.util.CertUtil;
 
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.DatatypeConverter;
@@ -74,13 +76,19 @@ public class SigningService {
      * Prepares given container {@link Container} for the signature process.
      *
      * @param certificateDTO user's X.509 certificate
+     * @param authentication authenticated principal
      * @return data to be signed
      */
-    public DigestDTO prepareContainer(CertificateDTO certificateDTO) throws CertificateException, NoSuchAlgorithmException, IOException {
+    public DigestDTO prepareContainer(CertificateDTO certificateDTO, WebEidAuthentication authentication) throws CertificateException, NoSuchAlgorithmException, IOException {
+        X509Certificate certificate = certificateDTO.toX509Certificate();
+        if (!authentication.getIdCode().equals(CertUtil.getSubjectIdCode(certificate))) {
+            throw new IllegalArgumentException("Authenticated subject ID code differs from " +
+                    "signing certificate subject ID code");
+        }
+
         FileDTO fileDTO = FileDTO.getExampleForSigningFromResources();
         Container containerToSign = getContainerToSign(fileDTO);
         String containerName = generateContainerName(fileDTO.getName());
-        X509Certificate certificate = certificateDTO.toX509Certificate();
 
         currentSession().setAttribute(SESSION_ATTR_CONTAINER, containerToSign);
         currentSession().setAttribute(SESSION_ATTR_FILE, fileDTO);
@@ -118,22 +126,16 @@ public class SigningService {
      * @return fileDTO
      */
     public FileDTO signContainer(SignatureDTO signatureDTO) {
-        try {
-            FileDTO fileDTO = (FileDTO) Objects.requireNonNull(currentSession().getAttribute(SESSION_ATTR_FILE));
-            Container containerToSign = (Container) Objects.requireNonNull(currentSession().getAttribute(SESSION_ATTR_CONTAINER));
-            DataToSign dataToSign = (DataToSign) Objects.requireNonNull(currentSession().getAttribute(SESSION_ATTR_DATA));
+        FileDTO fileDTO = (FileDTO) Objects.requireNonNull(currentSession().getAttribute(SESSION_ATTR_FILE));
+        Container containerToSign = (Container) Objects.requireNonNull(currentSession().getAttribute(SESSION_ATTR_CONTAINER));
+        DataToSign dataToSign = (DataToSign) Objects.requireNonNull(currentSession().getAttribute(SESSION_ATTR_DATA));
 
-            byte[] signatureBytes = DatatypeConverter.parseBase64Binary(signatureDTO.getBase64Signature());
-            Signature signature = dataToSign.finalize(signatureBytes);
-            containerToSign.addSignature(signature);
-            currentSession().setAttribute(SESSION_ATTR_CONTAINER, containerToSign);
+        byte[] signatureBytes = DatatypeConverter.parseBase64Binary(signatureDTO.getBase64Signature());
+        Signature signature = dataToSign.finalize(signatureBytes);
+        containerToSign.addSignature(signature);
+        currentSession().setAttribute(SESSION_ATTR_CONTAINER, containerToSign);
 
-            return new FileDTO(generateContainerName(fileDTO.getName()));
-
-        } catch (Exception ex) {
-            LOG.error("Signing of container caused an error", ex);
-            throw new RuntimeException("Signing of container caused an error");
-        }
+        return new FileDTO(generateContainerName(fileDTO.getName()));
     }
 
     public String getContainerName() {
