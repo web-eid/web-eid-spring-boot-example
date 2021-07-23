@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 The Web eID Project
+ * Copyright (c) 2020, 2021 The Web eID Project
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,6 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import org.springframework.stereotype.Component;
 import org.webeid.example.security.dto.AuthTokenDTO;
 import org.webeid.security.exceptions.TokenValidationException;
-import org.webeid.security.util.CertUtil;
 import org.webeid.security.validator.AuthTokenValidator;
 
 import java.security.cert.CertificateEncodingException;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 The Web eID Project
+ * Copyright (c) 2020, 2021 The Web eID Project
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,11 +41,12 @@ import org.webeid.example.service.dto.DigestDTO;
 import org.webeid.example.testutil.Dates;
 import org.webeid.example.testutil.HttpHelper;
 import org.webeid.example.testutil.ObjectMother;
+import org.webeid.security.util.UtcDateTime;
 import org.webeid.security.validator.AuthTokenValidatorData;
 import org.webeid.security.validator.validators.SubjectCertificateNotRevokedValidator;
 
 import javax.cache.Cache;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -55,7 +56,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 public class WebApplicationTest {
 
     @Autowired
-    Cache<String, LocalDateTime> cache;
+    Cache<String, ZonedDateTime> cache;
 
     @Autowired
     private WebApplicationContext context;
@@ -102,7 +103,7 @@ public class WebApplicationTest {
             }
         };
 
-        cache.put(TEST_NONCE, LocalDateTime.now().plusMinutes(5));
+        cache.put(TEST_NONCE, UtcDateTime.now().plusMinutes(5));
 
         final MockHttpSession session = new MockHttpSession();
 

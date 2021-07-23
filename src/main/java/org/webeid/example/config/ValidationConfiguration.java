@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 The Web eID Project
+ * Copyright (c) 2020, 2021 The Web eID Project
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -69,9 +69,9 @@ public class ValidationConfiguration {
     }
 
     @Bean
-    public Cache<String, LocalDateTime> nonceCache() {
+    public Cache<String, ZonedDateTime> nonceCache() {
         final CacheManager cacheManager = cacheManager();
-        Cache<String, LocalDateTime> cache = cacheManager.getCache(CACHE_NAME);
+        Cache<String, ZonedDateTime> cache = cacheManager.getCache(CACHE_NAME);
 
         if (cache == null) {
             cache = createNonceCache(cacheManager);
@@ -149,9 +149,9 @@ public class ValidationConfiguration {
         return new YAMLConfig();
     }
 
-    private Cache<String, LocalDateTime> createNonceCache(CacheManager cacheManager) {
-        CompleteConfiguration<String, LocalDateTime> cacheConfig = new MutableConfiguration<String, LocalDateTime>()
-                .setTypes(String.class, LocalDateTime.class)
+    private Cache<String, ZonedDateTime> createNonceCache(CacheManager cacheManager) {
+        CompleteConfiguration<String, ZonedDateTime> cacheConfig = new MutableConfiguration<String, ZonedDateTime>()
+                .setTypes(String.class, ZonedDateTime.class)
                 .setExpiryPolicyFactory(factoryOf(new CreatedExpiryPolicy(
                         new Duration(TimeUnit.MINUTES, NONCE_TTL_MINUTES + 1))));
         return cacheManager.createCache(CACHE_NAME, cacheConfig);
