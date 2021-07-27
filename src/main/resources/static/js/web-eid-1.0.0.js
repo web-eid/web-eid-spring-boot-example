@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 The Web eID Project
+ * Copyright (c) Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,9 +19,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 var config = Object.freeze({
-    VERSION: "0.9.0",
+    VERSION: "1.0.0",
     EXTENSION_HANDSHAKE_TIMEOUT: 1000,
     NATIVE_APP_HANDSHAKE_TIMEOUT: 5 * 1000,
     DEFAULT_USER_INTERACTION_TIMEOUT: 2 * 60 * 1000,
@@ -51,6 +50,7 @@ var ErrorCode;
     // Third party errors
     ErrorCode["ERR_WEBEID_SERVER_REJECTED"] = "ERR_WEBEID_SERVER_REJECTED";
     ErrorCode["ERR_WEBEID_USER_CANCELLED"] = "ERR_WEBEID_USER_CANCELLED";
+    ErrorCode["ERR_WEBEID_NATIVE_INVALID_ARGUMENT"] = "ERR_WEBEID_NATIVE_INVALID_ARGUMENT";
     ErrorCode["ERR_WEBEID_NATIVE_FATAL"] = "ERR_WEBEID_NATIVE_FATAL";
     // Developer mistakes
     ErrorCode["ERR_WEBEID_ACTION_PENDING"] = "ERR_WEBEID_ACTION_PENDING";
@@ -113,6 +113,14 @@ class ActionPendingError extends Error {
         super(message);
         this.name = this.constructor.name;
         this.code = ErrorCode$1.ERR_WEBEID_ACTION_PENDING;
+    }
+}
+
+class NativeInvalidArgumentError extends Error {
+    constructor(message = "native application received an invalid argument") {
+        super(message);
+        this.name = this.constructor.name;
+        this.code = ErrorCode$1.ERR_WEBEID_NATIVE_INVALID_ARGUMENT;
     }
 }
 
@@ -257,6 +265,7 @@ const errorCodeToErrorClass = {
     [ErrorCode$1.ERR_WEBEID_ORIGIN_MISMATCH]: OriginMismatchError,
     [ErrorCode$1.ERR_WEBEID_CONTEXT_INSECURE]: ContextInsecureError,
     [ErrorCode$1.ERR_WEBEID_EXTENSION_UNAVAILABLE]: ExtensionUnavailableError,
+    [ErrorCode$1.ERR_WEBEID_NATIVE_INVALID_ARGUMENT]: NativeInvalidArgumentError,
     [ErrorCode$1.ERR_WEBEID_NATIVE_FATAL]: NativeFatalError,
     [ErrorCode$1.ERR_WEBEID_NATIVE_UNAVAILABLE]: NativeUnavailableError,
     [ErrorCode$1.ERR_WEBEID_PROTOCOL_INSECURE]: ProtocolInsecureError,

@@ -46,37 +46,22 @@
             <hr/>
             <h3><a id="usage"></a>Usage</h3>
             <p>
-                Instructions for installing and testing version 1.0.0-rc2 in Firefox, Chrome, Edge or Safari:
+                Instructions for installing and testing version 1.0.0 in Firefox, Chrome, Edge or Safari:
             </p>
             <ol>
                 <li>
                     Download and run the Web eID native app and browser extension installer:
                     <ul>
                         <li>on <b>Ubuntu Linux</b> 20.04, for Firefox and Chrome from <a
-                                href="https://github.com/web-eid/web-eid-app/releases/download/1.0.0-rc2/web-eid_1.0.0.511_amd64.deb">here</a>,
+                                href="https://installer.id.ee/media/web-eid/web-eid_1.0.0.521-2004_amd64.deb">here</a>,
                             install it with either the Ubuntu Software Center or from the console with<br>
-                            <code>sudo apt install ./web-eid_1.0.0.511_amd64.deb</code>
+                            <code>sudo apt install ./web-eid_[version].deb</code>
                         </li>
-                        <li>on <b>macOS</b> 10.15 or later,
-                            <ul>
-                                <li>
-                                    for Firefox from <a
-                                        href="https://github.com/web-eid/web-eid-app/releases/download/1.0.0-rc2/web-eid-firefox_1.0.0.511.pkg">here</a>,
-                                </li>
-                                <li>
-                                    for Chrome from <a
-                                        href="https://github.com/web-eid/web-eid-app/releases/download/1.0.0-rc2/web-eid-chrome_1.0.0.511.pkg">here</a>;
-                                </li>
-                                <li>
-                                    Safari extension is also available from <a
-                                        href="https://github.com/web-eid/web-eid-app/releases/download/1.0.0-rc2/web-eid-safari_1.0.0.511.pkg">here</a>,
-                                    but it is not yet signed, so it is not currently possible to enable it; a signed
-                                    release will be available shortly.
-                                </li>
-                            </ul>
+                        <li>on <b>macOS</b> 10.15 or later, for Firefox, Chrome and Safari from <a
+                                href="https://installer.id.ee/media/web-eid/web-eid_1.0.0.525.dmg">here</a>,
                         </li>
                         <li>on <b>Windows</b> 10 (64-bit), for Firefox, Chrome and Edge from <a
-                                href="https://github.com/web-eid/web-eid-app/releases/download/1.0.0-rc2/web-eid_1.0.0.511.x64.qt.msi">here</a>.
+                                href="https://installer.id.ee/media/web-eid/web-eid_1.0.0.527.exe">here</a>.
                         </li>
                     </ul>
                 </li>
@@ -84,8 +69,7 @@
                     The installer will install the browser extension for all supported browsers automatically.
                     The extension must be manually enabled from either the extension installation pop-up that appears in
                     the browser or from the browser extensions management page and may need browser restart under
-                    certain
-                    circumstances.
+                    certain circumstances.
                 </li>
                 <li>
                     Attach a smart card reader to the computer and insert the eID card into the reader.
@@ -215,7 +199,7 @@
 
 <script type="module">
     "use strict";
-    import * as webeid from "/js/web-eid-0.9.0.js";
+    import * as webeid from "/js/web-eid-1.0.0.js";
     import {hideErrorMessage, showErrorMessage} from "/js/error-message.js";
 
     hideErrorMessage();
