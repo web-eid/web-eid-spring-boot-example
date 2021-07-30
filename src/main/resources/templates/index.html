@@ -91,28 +91,25 @@
 
             <hr/>
             <h4>Uninstallation</h4>
+            <p>The uninstaller will remove the browser extension from all supported browsers automatically.</p>
 
             <h5>Ubuntu Linux</h5>
-            <p>Uninstall Web eID either using the Ubuntu Software Center or from the console with<br>
+            <p>Uninstall the Web eID software either using the Ubuntu Software Center or from the console with<br>
                 <code>sudo apt purge web-eid</code></p>
-            <p>The uninstaller will remove the browser extension from all supported browsers automatically.</p>
 
             <h5>macOS</h5>
-            <p>Uninstall Web eID with<br>
-                <code>sudo rm -rf /Applications/Utilities/web-eid.app \</code><br>
-                <code>&nbsp;&nbsp;/Library/Google/Chrome/NativeMessagingHosts/eu.webeid.json \</code><br>
-                <code>&nbsp;&nbsp;/Library/Application\ Support/Mozilla/NativeMessagingHosts/eu.webeid.json \</code><br>
-                <code>&nbsp;&nbsp;/Library/Application\ Support/Google/Chrome/External\
-                    Extensions/ncibgoaomkmdpilpocfeponihegamlic.json</code><br>
-                <code>PLIST=/Library/Preferences/org.mozilla.firefox.plist</code><br>
-                <code>sudo defaults write ${PLIST} ExtensionSettings \</code><br>
-                <code>&nbsp;&nbsp;-dict-add "'{e68418bc-f2b0-4459-a9ea-3e72b6751b07}'" "{ 'installation_mode' =
-                    'blocked'; }"</code>
-            </p>
+            <p>To uninstall the Web eID software, do the following:</p>
+            <ol>
+                <li>download the Web eID native app and browser extension installer as instructed above,</li>
+                <li>open the downloaded file,</li>
+                <li>open <i>Terminal</i>,</li>
+                <li>drag and drop <code>uninstall.sh</code> from the downloaded file to the <i>Terminal</i> window,</li>
+                <li>press <i>Enter</i> and <i>Y</i>,</li>
+                <li>enter your password.</li>
+            </ol>
 
             <h5>Windows</h5>
-            <p>Uninstall Web eID using <i>Add or remove programs</i>.</p>
-            <p>The uninstaller will remove the browser extension from all supported browsers automatically.</p>
+            <p>Uninstall the Web eID software using <i>Add or remove programs</i>.</p>
 
             <h4>Debugging and logs</h4>
             <ul>
@@ -129,8 +126,11 @@
                             <code>echo 'logging=true' > ~/.config/RIA/web-eid.conf</code>
                         </li>
                         <li>in macOS, run the following command in the console:<br>
-                            <code>defaults write eu.web-eid.web-eid logging true</code><br>
-                            <code>defaults write eu.web-eid.web-eid-safari logging true</code>
+                            <code>defaults write \</code><br>
+                            <code>&nbsp;&nbsp;"$HOME/Library/Containers/eu.web-eid.web-eid/Data/Library/Preferences/eu.web-eid.web-eid.plist"
+                                \</code><br>
+                            <code>&nbsp;&nbsp;logging true</code><!-- <br>
+                            <code>defaults write "$HOME/Library/Containers/eu.web-eid.web-eid-safari/Data/Library/Preferences/eu.web-eid.web-eid-safari.plist" true</code> -->
                         </li>
                         <li>in Windows, add the following registry key:<br>
                             <code>[HKEY_CURRENT_USER\SOFTWARE\RIA\web-eid]</code><br>
@@ -142,7 +142,12 @@
                     The native app logs are stored in
                     <ul>
                         <li><code>~/.local/share/RIA/web-eid/web-eid.log</code> in Linux</li>
-                        <li><code>~/Library/Application Support/RIA/web-eid/web-eid.log</code> in macOS</li>
+                        <li><code>~/Library/Containers/eu.web-eid.web-eid/Data/Library/Application\
+                            Support/RIA/web-eid/web-eid.log</code> in macOS
+                        </li>
+                        <!-- <li><code>~/Library/Containers/eu.web-eid.web-eid-safari/Data/Library/Application\
+                           Support/RIA/web-eid-safari/web-eid-safari.log</code> of Safari in macOS
+                        </li> -->
                         <li>
                             <code>C:/Users/&lt;USER&gt;/AppData/Local/RIA/web-eid/web-eid.log</code> in Windows.
                         </li>
@@ -167,6 +172,8 @@
             <h3><a id="for-developers"></a>For developers</h3>
             <p>
                 Currently the Web eID back-end libraries are available for Java web applications.
+                The .NET/C# version is in the works, the development version is available
+                <a href="https://github.com/web-eid/web-eid-authtoken-validation-dotnet/">here</a>.
             </p>
             <p>
                 To implement authentication and digital signing with Web eID in a Java web application,
@@ -189,6 +196,8 @@
                 The full source code of an example Spring Boot web application that uses Web eID for authentication
                 and digital signing is available
                 <a href="https://github.com/web-eid/web-eid-spring-boot-example">here</a>.
+                The .NET/C# version of the example will eventually be available
+                <a href="https://github.com/web-eid/web-eid-asp-dotnet-example">here</a>.
             </p>
         </div>
     </div>
