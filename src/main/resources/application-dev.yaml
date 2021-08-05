@@ -1,0 +1,4 @@
+web-eid-auth-token:
+  validation:
+    use-digidoc4j-prod-configuration: false
+    local-origin: "https://528bc9f21520.ngrok.io"

@@ -25,33 +25,25 @@ package org.webeid.example;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.webeid.example.security.ajax.AjaxAuthenticationSuccessHandler;
 import org.webeid.example.web.rest.ChallengeController;
 
-import javax.servlet.http.HttpSession;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.webeid.security.nonce.NonceGenerator.NONCE_LENGTH;
 
 @SpringBootTest
 class AuthenticationRestControllerTest {
+
     @Autowired
     ChallengeController authRestController;
 
-    @Autowired
-    AjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandler;
-
-    @Autowired
-    HttpSession httpSession;
-
     @Test
-    void contextLoads() {
-        assertThat(authRestController).isNotNull();
+    void testChallengeNonceLength() {
+        assertThat(authRestController.challenge().getNonce().length())
+                .isEqualTo(nonceGeneratorNonceBase64Length());
     }
 
-    @Test
-    void challengeNotNull() {
-        assertThat(authRestController.challenge()).isNotNull();
+    private int nonceGeneratorNonceBase64Length() {
+        return (NONCE_LENGTH * 8 + 6 - 1) / 6 + 1;
     }
 
-    // TODO: add tests here
 }

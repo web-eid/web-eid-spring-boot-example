@@ -86,7 +86,7 @@ public class WebApplicationTest {
     }
 
     @Test
-    public void testHappyFlow_LoginUploadPrepareSignDownload() throws Exception {
+    public void testHappyFlow_LoginPrepareSignDownload() throws Exception {
 
         // Arrange
         new MockUp<SubjectCertificateNotRevokedValidator>() {
