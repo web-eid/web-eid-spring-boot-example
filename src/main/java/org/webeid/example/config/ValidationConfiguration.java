@@ -23,6 +23,9 @@
 package org.webeid.example.config;
 
 import com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -60,8 +63,15 @@ import static javax.cache.configuration.FactoryBuilder.factoryOf;
 @Configuration
 public class ValidationConfiguration {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ValidationConfiguration.class);
+
     private static final String CACHE_NAME = "nonceCache";
     private static final long NONCE_TTL_MINUTES = 5;
+    private static final String CERTS_RESOURCE_PATH = "/certs/";
+    public static final String TRUSTED_CERTIFICATES_JKS = "trusted_certificates.jks";
+
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
 
     @Bean
     public CacheManager cacheManager() {
@@ -88,14 +98,14 @@ public class ValidationConfiguration {
     }
 
     @Bean
-    public X509Certificate[] loadTrustedCACertificatesFromResources() {
+    public X509Certificate[] loadTrustedCACertificatesFromCerFiles() {
         List<X509Certificate> caCertificates = new ArrayList<>();
 
         try {
             CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
 
             PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-            Resource[] resources = resolver.getResources("/certs/*.cer");
+            Resource[] resources = resolver.getResources(CERTS_RESOURCE_PATH + activeProfile + "/*.cer");
 
             for (Resource resource : resources) {
                 X509Certificate caCertificate = (X509Certificate) certFactory.generateCertificate(resource.getInputStream());
@@ -110,12 +120,16 @@ public class ValidationConfiguration {
     }
 
     @Bean
-    public X509Certificate[] loadTrustedCACertificatesFromKeyStore() {
+    public X509Certificate[] loadTrustedCACertificatesFromTrustStore() {
         List<X509Certificate> caCertificates = new ArrayList<>();
 
-        try (InputStream is = ValidationConfiguration.class.getResourceAsStream("/certs/trusted_certificates.jks")) {
+        try (InputStream is = ValidationConfiguration.class.getResourceAsStream(CERTS_RESOURCE_PATH + activeProfile + "/" + TRUSTED_CERTIFICATES_JKS)) {
+            if (is == null) {
+                LOG.info("Truststore file {} not found for {} profile", TRUSTED_CERTIFICATES_JKS, activeProfile);
+                return new X509Certificate[0];
+            }
             KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keystore.load(is, yamlConfig().getKeystorePassword().toCharArray());
+            keystore.load(is, yamlConfig().getTrustStorePassword().toCharArray());
             Enumeration<String> aliases = keystore.aliases();
             while (aliases.hasMoreElements()) {
                 String alias = aliases.nextElement();
@@ -136,8 +150,8 @@ public class ValidationConfiguration {
             return new AuthTokenValidatorBuilder()
                     .withSiteOrigin(URI.create(yamlConfig().getLocalOrigin()))
                     .withNonceCache(nonceCache())
-                    .withTrustedCertificateAuthorities(loadTrustedCACertificatesFromResources())
-                    .withTrustedCertificateAuthorities(loadTrustedCACertificatesFromKeyStore())
+                    .withTrustedCertificateAuthorities(loadTrustedCACertificatesFromCerFiles())
+                    .withTrustedCertificateAuthorities(loadTrustedCACertificatesFromTrustStore())
                     .build();
         } catch (JceException e) {
             throw new RuntimeException("Error building the Web eID auth token validator.", e);

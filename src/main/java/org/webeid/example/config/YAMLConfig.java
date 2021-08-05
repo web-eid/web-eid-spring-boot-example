@@ -38,8 +38,8 @@ public class YAMLConfig {
     private String localOrigin;
     private String fingerprint;
 
-    @Value("keystore-password")
-    private String keystorePassword;
+    @Value("truststore-password")
+    private String trustStorePassword;
 
     @Value("#{new Boolean('${web-eid-auth-token.validation.use-digidoc4j-prod-configuration}'.trim())}")
     private Boolean useDigiDoc4jProdConfiguration;
@@ -63,12 +63,12 @@ public class YAMLConfig {
         this.fingerprint = fingerprint;
     }
 
-    public String getKeystorePassword() {
-        return keystorePassword;
+    public String getTrustStorePassword() {
+        return trustStorePassword;
     }
 
-    public void setKeystorePassword(String keystorePassword) {
-        this.keystorePassword = keystorePassword;
+    public void setTrustStorePassword(String trustStorePassword) {
+        this.trustStorePassword = trustStorePassword;
     }
 
     public boolean getUseDigiDoc4jProdConfiguration() {

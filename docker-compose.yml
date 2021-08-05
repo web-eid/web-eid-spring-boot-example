@@ -3,5 +3,8 @@ services:
   web-eid-springboot-example:
     image: web-eid-springboot-example:1.0.0-SNAPSHOT
     restart: always
+    environment:
+      JAVA_TOOL_OPTIONS: '-Dspring.profiles.active=prod'
     ports:
       - '127.0.0.1:8380:8080'
+
