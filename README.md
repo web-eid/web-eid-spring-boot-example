@@ -69,7 +69,7 @@ When the application has started, open the _ngrok_ HTTPS URL in your preferred w
   + [Configuration](#configuration)
   + [Integration with Web eID components](#integration-with-web-eid-components)
   + [Integration with DigiDoc4j components](#integration-with-digidoc4j-components)
-    - [Using the Certificates' *Authority Information Access* (AIA) extension in DigiDoc4j](#using-the-certificates-_authority-information-access_-aia-extension-in-digidoc4j)
+    - [Using the Certificates' *Authority Information Access* (AIA) extension in DigiDoc4j](#using-the-certificates-authority-information-access-aia-extension-in-digidoc4j)
     - [Using DigiDoc4j in test mode with the `dev` profile](#using-digidoc4j-in-test-mode-with-the-dev-profile)
     - [Using DigiDoc4j in production mode with the `prod` profile](#using-digidoc4j-in-production-mode-with-the-prod-profile)
   + [Stateful and stateless authentication](#stateful-and-stateless-authentication)
