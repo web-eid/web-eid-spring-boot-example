@@ -25,7 +25,7 @@ package org.webeid.example.security;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-import org.webeid.security.util.CertUtil;
+import org.webeid.security.certificate.CertificateData;
 
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -38,7 +38,7 @@ public class WebEidAuthentication extends PreAuthenticatedAuthenticationToken im
 
     public static Authentication fromCertificate(X509Certificate userCertificate, List<GrantedAuthority> authorities) throws CertificateEncodingException {
         final String principalName = getPrincipalNameFromCertificate(userCertificate);
-        final String idCode = Objects.requireNonNull(CertUtil.getSubjectIdCode(userCertificate));
+        final String idCode = Objects.requireNonNull(CertificateData.getSubjectIdCode(userCertificate));
         return new WebEidAuthentication(principalName, idCode, authorities);
     }
 
@@ -52,8 +52,8 @@ public class WebEidAuthentication extends PreAuthenticatedAuthenticationToken im
     }
 
     private static String getPrincipalNameFromCertificate(X509Certificate userCertificate) throws CertificateEncodingException {
-        return Objects.requireNonNull(CertUtil.getSubjectGivenName(userCertificate)) + ' ' +
-                Objects.requireNonNull(CertUtil.getSubjectSurname(userCertificate));
+        return Objects.requireNonNull(CertificateData.getSubjectGivenName(userCertificate)) + ' ' +
+                Objects.requireNonNull(CertificateData.getSubjectSurname(userCertificate));
     }
 
 }

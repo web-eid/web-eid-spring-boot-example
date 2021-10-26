@@ -38,7 +38,7 @@ import org.webeid.example.service.dto.DigestDTO;
 import org.webeid.example.service.dto.FileDTO;
 import org.webeid.example.service.dto.SignatureDTO;
 import org.webeid.example.web.rest.SigningController;
-import org.webeid.security.util.CertUtil;
+import org.webeid.security.certificate.CertificateData;
 
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.DatatypeConverter;
@@ -81,7 +81,7 @@ public class SigningService {
      */
     public DigestDTO prepareContainer(CertificateDTO certificateDTO, WebEidAuthentication authentication) throws CertificateException, NoSuchAlgorithmException, IOException {
         X509Certificate certificate = certificateDTO.toX509Certificate();
-        if (!authentication.getIdCode().equals(CertUtil.getSubjectIdCode(certificate))) {
+        if (!authentication.getIdCode().equals(CertificateData.getSubjectIdCode(certificate))) {
             throw new IllegalArgumentException("Authenticated subject ID code differs from " +
                     "signing certificate subject ID code");
         }

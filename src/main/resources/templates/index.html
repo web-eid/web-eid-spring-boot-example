@@ -46,8 +46,7 @@
             <hr/>
             <h3><a id="usage"></a>Usage</h3>
             <p>
-                Instructions for installing and testing version 1.0.0 in Firefox, Chrome or Edge
-                (Safari support on macOS will also be available shortly):
+                Instructions for installing and testing the latest version in Firefox, Chrome, Edge or Safari:
             </p>
             <ol>
                 <li>
@@ -60,6 +59,9 @@
                         </li>
                         <li>on <b>macOS</b> 10.15 or later, for Firefox and Chrome from <a
                                 href="https://installer.id.ee/media/web-eid/web-eid_1.0.0.525.dmg">here</a>,
+                        </li>
+                        <li>on <b>macOS</b> 10.15 or later, for Safari, install the extension from <a
+                                href="https://apps.apple.com/ee/app/web-eid/id1576665083?mt=12">App Store</a>,
                         </li>
                         <li>on <b>Windows</b> 10 (64-bit), for Firefox, Chrome and Edge from <a
                                 href="https://installer.id.ee/media/web-eid/web-eid_1.0.0.527.exe">here</a>.
@@ -129,8 +131,9 @@
                             <code>defaults write \</code><br>
                             <code>&nbsp;&nbsp;"$HOME/Library/Containers/eu.web-eid.web-eid/Data/Library/Preferences/eu.web-eid.web-eid.plist"
                                 \</code><br>
-                            <code>&nbsp;&nbsp;logging true</code><!-- <br>
-                            <code>defaults write "$HOME/Library/Containers/eu.web-eid.web-eid-safari/Data/Library/Preferences/eu.web-eid.web-eid-safari.plist" true</code> -->
+                            <code>&nbsp;&nbsp;logging true</code><br>
+                            <code>defaults write "$HOME/Library/Containers/eu.web-eid.web-eid-safari/Data/Library/Preferences/eu.web-eid.web-eid-safari.plist" \</code><br>
+                            <code>&nbsp;&nbsp;logging true</code><br>
                         </li>
                         <li>in Windows, add the following registry key:<br>
                             <code>[HKEY_CURRENT_USER\SOFTWARE\RIA\web-eid]</code><br>
@@ -145,9 +148,9 @@
                         <li><code>~/Library/Containers/eu.web-eid.web-eid/Data/Library/Application\
                             Support/RIA/web-eid/web-eid.log</code> in macOS
                         </li>
-                        <!-- <li><code>~/Library/Containers/eu.web-eid.web-eid-safari/Data/Library/Application\
+                        <li><code>~/Library/Containers/eu.web-eid.web-eid-safari/Data/Library/Application\
                            Support/RIA/web-eid-safari/web-eid-safari.log</code> of Safari in macOS
-                        </li> -->
+                        </li>
                         <li>
                             <code>C:/Users/&lt;USER&gt;/AppData/Local/RIA/web-eid/web-eid.log</code> in Windows.
                         </li>
@@ -209,7 +212,7 @@
 
 <script type="module">
     "use strict";
-    import * as webeid from "/js/web-eid-1.0.0.js";
+    import * as webeid from "/js/web-eid-1.0.1.js";
     import {hideErrorMessage, showErrorMessage} from "/js/error-message.js";
 
     hideErrorMessage();
