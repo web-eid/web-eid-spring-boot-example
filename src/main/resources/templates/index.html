@@ -53,18 +53,18 @@
                     Download and run the Web eID native app and browser extension installer:
                     <ul>
                         <li>on <b>Ubuntu Linux</b> 20.04, for Firefox and Chrome from <a
-                                href="https://installer.id.ee/media/web-eid/web-eid_1.0.0.521-2004_amd64.deb">here</a>,
+                                href="https://installer.id.ee/media/web-eid/web-eid_2.0.0.555-2110_all.deb">here</a>,
                             install it with either the Ubuntu Software Center or from the console with<br>
                             <code>sudo apt install ./web-eid_[version].deb</code>
                         </li>
                         <li>on <b>macOS</b> 10.15 or later, for Firefox and Chrome from <a
-                                href="https://installer.id.ee/media/web-eid/web-eid_1.0.0.525.dmg">here</a>,
+                                href="https://installer.id.ee/media/web-eid/web-eid_2.0.0.556.dmg">here</a>,
                         </li>
                         <li>on <b>macOS</b> 10.15 or later, for Safari, install the extension from <a
                                 href="https://apps.apple.com/ee/app/web-eid/id1576665083?mt=12">App Store</a>,
                         </li>
                         <li>on <b>Windows</b> 10 (64-bit), for Firefox, Chrome and Edge from <a
-                                href="https://installer.id.ee/media/web-eid/web-eid_1.0.0.527.exe">here</a>.
+                                href="https://installer.id.ee/media/web-eid/web-eid_2.0.0.552.exe">here</a>.
                         </li>
                     </ul>
                 </li>
@@ -132,7 +132,9 @@
                             <code>&nbsp;&nbsp;"$HOME/Library/Containers/eu.web-eid.web-eid/Data/Library/Preferences/eu.web-eid.web-eid.plist"
                                 \</code><br>
                             <code>&nbsp;&nbsp;logging true</code><br>
-                            <code>defaults write "$HOME/Library/Containers/eu.web-eid.web-eid-safari/Data/Library/Preferences/eu.web-eid.web-eid-safari.plist" \</code><br>
+                            <code>defaults write
+                                "$HOME/Library/Containers/eu.web-eid.web-eid-safari/Data/Library/Preferences/eu.web-eid.web-eid-safari.plist"
+                                \</code><br>
                             <code>&nbsp;&nbsp;logging true</code><br>
                         </li>
                         <li>in Windows, add the following registry key:<br>
@@ -149,7 +151,7 @@
                             Support/RIA/web-eid/web-eid.log</code> in macOS
                         </li>
                         <li><code>~/Library/Containers/eu.web-eid.web-eid-safari/Data/Library/Application\
-                           Support/RIA/web-eid-safari/web-eid-safari.log</code> of Safari in macOS
+                            Support/RIA/web-eid-safari/web-eid-safari.log</code> of Safari in macOS
                         </li>
                         <li>
                             <code>C:/Users/&lt;USER&gt;/AppData/Local/RIA/web-eid/web-eid.log</code> in Windows.
@@ -162,7 +164,7 @@
             <h3><a id="documentation"></a>Documentation</h3>
             <p>
                 Technical overview of the solution is available in the project
-                <a href="https://github.com/open-eid/browser-extensions2">system architecture document</a>.
+                <a href="https://github.com/web-eid/web-eid-system-architecture-doc">system architecture document</a>.
                 Overview of authentication token validation implementation in the back end is available in the
                 <i>web-eid-authtoken-validation-java</i> Java library
                 <a href="https://github.com/web-eid/web-eid-authtoken-validation-java#authentication-token-validation">README</a>.
@@ -212,8 +214,8 @@
 
 <script type="module">
     "use strict";
-    import * as webeid from "/js/web-eid-1.0.1.js";
-    import {hideErrorMessage, showErrorMessage} from "/js/error-message.js";
+    import * as webeid from "/js/web-eid.js";
+    import {hideErrorMessage, showErrorMessage, checkHttpError} from "/js/errors.js";
 
     hideErrorMessage();
 
@@ -222,23 +224,39 @@
     const csrfToken = document.querySelector('#csrftoken').content;
     const csrfHeaderName = document.querySelector('#csrfheadername').content;
 
-    authButton.addEventListener("click", async () => {
-        const options = {
-            getAuthChallengeUrl: window.location.origin + "/auth/challenge",
-            postAuthTokenUrl: window.location.origin + "/auth/login",
-            headers: {
-                [csrfHeaderName]: csrfToken
-            }
-        };
+    const lang = new URLSearchParams(window.location.search).get("lang") || "en";
 
+    authButton.addEventListener("click", async () => {
         hideErrorMessage();
         authButton.disabled = true;
 
         try {
-            const response = await webeid.authenticate(options);
+            const challengeResponse = await fetch("/auth/challenge", {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            await checkHttpError(challengeResponse);
+            const {nonce} = await challengeResponse.json();
 
-            console.log("Authentication successful! Response:", response);
+            const authToken = await webeid.authenticate(nonce, {lang});
+
+            const authTokenResponse = await fetch("/auth/login", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeaderName]: csrfToken
+                },
+                body: `{"auth-token": ${JSON.stringify(authToken)}}`
+            });
+            await checkHttpError(authTokenResponse);
+            const authTokenResult = await authTokenResponse.json();
+
+            console.log("Authentication successful! Result:", authTokenResult);
+
             window.location.href = "/welcome";
+
         } catch (error) {
             showErrorMessage(error);
             throw error;
@@ -252,6 +270,7 @@
             document.querySelector(".eu-logo-fixed").style.display = 'none'
         }, 7000)
     });
+    //# sourceURL=index.js
 </script>
 </body>
 </html>

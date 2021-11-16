@@ -1,7 +1,7 @@
 version: '2'
 services:
   web-eid-springboot-example:
-    image: web-eid-springboot-example:1.0.0-SNAPSHOT
+    image: web-eid-springboot-example:2.0.0-SNAPSHOT
     restart: always
     environment:
       JAVA_TOOL_OPTIONS: '-Dspring.profiles.active=prod'

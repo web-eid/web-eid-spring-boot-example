@@ -50,8 +50,8 @@
 
 <script type="module">
     "use strict";
-    import * as webeid from "/js/web-eid-1.0.1.js";
-    import {hideErrorMessage, showErrorMessage} from "/js/error-message.js";
+    import * as webeid from "/js/web-eid.js";
+    import {hideErrorMessage, showErrorMessage, checkHttpError} from "/js/errors.js";
 
     const signButton = document.querySelector("#webeid-sign-button");
     const downloadButton = document.querySelector("#webeid-download-button");
@@ -71,24 +71,52 @@
     const csrfToken = document.querySelector('#csrftoken').content;
     const csrfHeaderName = document.querySelector('#csrfheadername').content;
 
-    signButton.addEventListener("click", async () => {
-        const options = {
-            postPrepareSigningUrl: window.location.origin + "/sign/prepare",
-            postFinalizeSigningUrl: window.location.origin + "/sign/sign",
-            headers: {
-                [csrfHeaderName]: csrfToken
-            }
-        };
+    const lang = new URLSearchParams(window.location.search).get("lang") || "en";
 
+    signButton.addEventListener("click", async () => {
         hideErrorMessage();
         signButton.disabled = true;
 
         try {
-            const response = await webeid.sign(options);
+            const {
+                certificate,
+                supportedSignatureAlgorithms,
+            } = await webeid.getSigningCertificate({lang});
+
+            const prepareSigningResponse = await fetch("/sign/prepare", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeaderName]: csrfToken
+                },
+                body: JSON.stringify({certificate, supportedSignatureAlgorithms}),
+            });
+            await checkHttpError(prepareSigningResponse);
+            const {
+                hash,
+                hashFunction
+            } = await prepareSigningResponse.json();
+
+            const {
+                signatureAlgorithm,
+                signature,
+            } = await webeid.sign(certificate, hash, hashFunction, {lang});
+
+            const finalizeSigningResponse = await fetch("/sign/sign", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeaderName]: csrfToken
+                },
+                body: JSON.stringify({signature, signatureAlgorithm}),
+            });
+            await checkHttpError(finalizeSigningResponse);
+            const signResult = await finalizeSigningResponse.json();
+
             signButton.setAttribute("style", "display: none;");
             exampleDocument.setAttribute("style", "display: none;");
             downloadButton.removeAttribute("style");
-            fileNameText.textContent = "Signature added: " + response.body.name;
+            fileNameText.textContent = "Signature added: " + signResult.name;
         } catch (error) {
             showErrorMessage(error);
             throw error;
