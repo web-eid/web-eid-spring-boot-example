@@ -86,7 +86,7 @@
             const prepareSigningResponse = await fetch("/sign/prepare", {
                 method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                     [csrfHeaderName]: csrfToken
                 },
                 body: JSON.stringify({certificate, supportedSignatureAlgorithms}),
@@ -105,7 +105,7 @@
             const finalizeSigningResponse = await fetch("/sign/sign", {
                 method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                     [csrfHeaderName]: csrfToken
                 },
                 body: JSON.stringify({signature, signatureAlgorithm}),

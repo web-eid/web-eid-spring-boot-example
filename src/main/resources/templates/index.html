@@ -234,7 +234,7 @@
             const challengeResponse = await fetch("/auth/challenge", {
                 method: "GET",
                 headers: {
-                    'Content-Type': 'application/json'
+                    "Content-Type": "application/json"
                 }
             });
             await checkHttpError(challengeResponse);
@@ -245,7 +245,7 @@
             const authTokenResponse = await fetch("/auth/login", {
                 method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                     [csrfHeaderName]: csrfToken
                 },
                 body: `{"auth-token": ${JSON.stringify(authToken)}}`
