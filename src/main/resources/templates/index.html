@@ -52,10 +52,9 @@
                 <li>
                     Download and run the Web eID native app and browser extension installer:
                     <ul>
-                        <li>on <b>Ubuntu Linux</b> 20.04, for Firefox and Chrome from <a
-                                href="https://installer.id.ee/media/web-eid/web-eid_2.0.0.555-2110_all.deb">here</a>,
-                            install it with either the Ubuntu Software Center or from the console with<br>
-                            <code>sudo apt install ./web-eid_[version].deb</code>
+                        <li>on <b>Ubuntu Linux</b>, for Firefox and Chrome, download and execute the<br>
+                            <a href="/scripts/download-install-web-eid.sh"><code>download-install-web-eid.sh</code></a> script from the console with<br>
+                            <code>wget -O - https://<span th:text="${#httpServletRequest.serverName}"/>/scripts/download-install-web-eid.sh | bash</code><br>
                         </li>
                         <li>on <b>macOS</b> 10.15 or later, for Firefox and Chrome from <a
                                 href="https://installer.id.ee/media/web-eid/web-eid_2.0.0.556.dmg">here</a>,
