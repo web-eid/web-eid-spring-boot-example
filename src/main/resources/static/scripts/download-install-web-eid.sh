@@ -40,7 +40,7 @@ make_install() {
   wget "https://installer.id.ee/media/web-eid/Ubuntu/web-eid-chrome_2.0.0.${BUILD}-${VERSION}_all.deb"
   wget "https://installer.id.ee/media/web-eid/Ubuntu/web-eid-firefox_2.0.0.${BUILD}-${VERSION}_all.deb"
   wget "https://installer.id.ee/media/web-eid/Ubuntu/web-eid-native_2.0.0.${BUILD}-${VERSION}_amd64.deb"
-  sudo apt install ./web-eid*.deb
+  sudo apt install -y ./web-eid*.deb
   cd /tmp
   rm -r $TMPDIR
 }
