@@ -125,7 +125,7 @@ public class WebApplicationTest {
         response = HttpHelper.sign(mvcBuilder, session, ObjectMother.mockSignRequest(digestDTO.getHash()));
         assertEquals(HttpStatus.OK.value(), response.getStatus());
 
-        response = HttpHelper.download(mvcBuilder, session, ObjectMother.mockSignRequest(digestDTO.getHash()));
+        response = HttpHelper.download(mvcBuilder, session);
         assertEquals(HttpStatus.OK.value(), response.getStatus());
         assertEquals("attachment; filename=example-for-signing.asice", response.getHeader("Content-Disposition"));
     }

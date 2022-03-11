@@ -92,7 +92,7 @@ public class HttpHelper {
         // @formatter:on
     }
 
-    public static MockHttpServletResponse download(DefaultMockMvcBuilder mvcBuilder, MockHttpSession session, SignatureDTO mockSignRequest) throws Exception {
+    public static MockHttpServletResponse download(DefaultMockMvcBuilder mvcBuilder, MockHttpSession session) throws Exception {
         // @formatter:off
         return mvcBuilder
                 .build()
