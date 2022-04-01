@@ -1,3 +1,7 @@
+spring:
+  main:
+    allow-circular-references: true
+
 # Make session cookie secure behind a reverse proxy, see
 # - https://docs.spring.io/spring-boot/docs/2.2.5.RELEASE/reference/htmlsingle/#howto-use-behind-a-proxy-server
 # - https://docs.spring.io/spring-boot/docs/2.2.5.RELEASE/reference/htmlsingle/#howto-enable-https
