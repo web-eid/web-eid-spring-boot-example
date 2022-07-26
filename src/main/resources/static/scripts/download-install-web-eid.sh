@@ -34,15 +34,17 @@ make_install() {
   echo "Installing Web eID packages for Ubuntu $1"
   TMPDIR=`mktemp -d`
   cd $TMPDIR
-  BUILD=`[[ $1 == *0 ]] && echo 555 || echo 552`
-  VERSION=${1//./}
-  wget "https://installer.id.ee/media/web-eid/Ubuntu/web-eid_2.0.0.${BUILD}-${VERSION}_all.deb"
-  wget "https://installer.id.ee/media/web-eid/Ubuntu/web-eid-chrome_2.0.0.${BUILD}-${VERSION}_all.deb"
-  wget "https://installer.id.ee/media/web-eid/Ubuntu/web-eid-firefox_2.0.0.${BUILD}-${VERSION}_all.deb"
-  wget "https://installer.id.ee/media/web-eid/Ubuntu/web-eid-native_2.0.0.${BUILD}-${VERSION}_amd64.deb"
-  sudo apt install -y ./web-eid*.deb
-  cd /tmp
-  rm -r $TMPDIR
+  VERSION='2.0.2'
+  # BUILD=`[[ $1 == *0 ]] && echo 555 || echo 552`
+  BUILD='565'
+  UBUNTU_VERSION=${1//./}
+  wget "https://installer.id.ee/media/web-eid/Ubuntu/web-eid_${VERSION}.${BUILD}-${UBUNTU_VERSION}_all.deb"
+  wget "https://installer.id.ee/media/web-eid/Ubuntu/web-eid-chrome_${VERSION}.${BUILD}-${UBUNTU_VERSION}_all.deb"
+  wget "https://installer.id.ee/media/web-eid/Ubuntu/web-eid-firefox_${VERSION}.${BUILD}-${UBUNTU_VERSION}_all.deb"
+  wget "https://installer.id.ee/media/web-eid/Ubuntu/web-eid-native_${VERSION}.${BUILD}-${UBUNTU_VERSION}_amd64.deb"
+  # sudo apt install -y ./web-eid*.deb
+  # cd /tmp
+  # rm -r $TMPDIR
 }
 
 ### main
@@ -60,8 +62,9 @@ test_sudo
 # 18.04     bionic  LTS   2023-04
 # 20.04     focal   LTS   2025-04
 # 21.10     impish   -    2022-07
-LATEST_SUPPORTED_UBUNTU_CODENAME='impish'
-LATEST_SUPPORTED_UBUNTU_VERSION='21.10'
+# 22.04     jammy   LTS   2027-04
+LATEST_SUPPORTED_UBUNTU_CODENAME='jammy'
+LATEST_SUPPORTED_UBUNTU_VERSION='22.04'
 
 # Check the distro and release.
 distro=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
@@ -91,7 +94,7 @@ case $distro in
         utopic|vivid|wily|trusty|artful|cosmic|disco|xenial|eoan|groovy|hirsute)
           make_fail "Ubuntu $codename is not officially supported"
           ;;
-        bionic|focal|impish)
+        bionic|focal|impish|jammy)
           make_install $release
           ;;
         *)

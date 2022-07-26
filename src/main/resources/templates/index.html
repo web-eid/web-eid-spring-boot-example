@@ -57,13 +57,14 @@
                             <code>wget -O - https://<span th:text="${#httpServletRequest.serverName}"/>/scripts/download-install-web-eid.sh | bash</code><br>
                         </li>
                         <li>on <b>macOS</b> 10.15 or later, for Firefox and Chrome from <a
-                                href="https://installer.id.ee/media/web-eid/web-eid_2.0.0.556.dmg">here</a>,
+                                href="https://installer.id.ee/media/web-eid/web-eid_2.0.2.565.dmg">here</a>,
                         </li>
                         <li>on <b>macOS</b> 10.15 or later, for Safari, install the extension from <a
                                 href="https://apps.apple.com/ee/app/web-eid/id1576665083?mt=12">App Store</a>,
                         </li>
-                        <li>on <b>Windows</b> 10 (64-bit), for Firefox, Chrome and Edge from <a
-                                href="https://installer.id.ee/media/web-eid/web-eid_2.0.0.552.exe">here</a>.
+                        <li>on <b>Windows</b> 10,  Windows 11, Windows Server 2016, Windows Server 2019, Windows Server 2022,
+                            for Firefox, Chrome and Edge from <a
+                                href="https://installer.id.ee/media/web-eid/web-eid_2.0.2.566.x64.exe">here</a>.
                         </li>
                     </ul>
                 </li>
@@ -175,9 +176,7 @@
             <hr/>
             <h3><a id="for-developers"></a>For developers</h3>
             <p>
-                Currently the Web eID back-end libraries are available for Java web applications.
-                The .NET/C# version is in the works, the development version is available
-                <a href="https://github.com/web-eid/web-eid-authtoken-validation-dotnet/">here</a>.
+                Currently the Web eID back-end libraries are available for Java and .NET web applications.
             </p>
             <p>
                 To implement authentication and digital signing with Web eID in a Java web application,
@@ -187,20 +186,31 @@
                     according to the instructions
                     <a href="https://github.com/web-eid/web-eid.js#quickstart">here</a>,
                 </li>
-                <li>for authentication, use the <i>web-eid-authtoken-validation-java</i> Java library in
-                    the back end of the web application according to the instructions
-                    <a href="https://github.com/web-eid/web-eid-authtoken-validation-java#quickstart">here</a>,
+                <li>for authentication
+                    <ul>
+                        <li>in Java use the <i>web-eid-authtoken-validation-java</i> library in
+                            the back end of the web application according to the instructions
+                            <a href="https://github.com/web-eid/web-eid-authtoken-validation-java#quickstart">here</a>,</li>
+                        <li>in .NET/C# use the <i>web-eid-authtoken-validation-dotnet</i> library according to the instructions
+                            <a href="https://github.com/web-eid/web-eid-authtoken-validation-dotnet#quickstart">here</a></li>
+                    </ul>
                 </li>
-                <li>for digital signing, use the <i>digidoc4j</i> Java library in the back end of the web
-                    application according to the instructions
-                    <a href="https://github.com/open-eid/digidoc4j/wiki/Examples-of-using-it">here</a>.
+                <li>for digital signing
+                    <ul>
+                        <li>in Java use the <i>digidoc4j</i> library in the back end of the web
+                            application according to the instructions
+                            <a href="https://github.com/web-eid/web-eid-spring-boot-example#integration-with-digidoc4j-components">here</a>,</li>
+                        <li>in .NET/C# use the <i>libdigidocpp</i> library in the back end of the web
+                            application according to the instructions
+                            <a href="https://github.com/web-eid/web-eid-asp-dotnet-example#3-setup-the-libdigidocpp-library-for-signing">here</a>.</li>
+                    </ul>
                 </li>
             </ul>
             <p>
                 The full source code of an example Spring Boot web application that uses Web eID for authentication
                 and digital signing is available
                 <a href="https://github.com/web-eid/web-eid-spring-boot-example">here</a>.
-                The .NET/C# version of the example will eventually be available
+                The .NET/C# version of the example is available
                 <a href="https://github.com/web-eid/web-eid-asp-dotnet-example">here</a>.
             </p>
         </div>
