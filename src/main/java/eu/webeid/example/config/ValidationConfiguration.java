@@ -126,11 +126,15 @@ public class ValidationConfiguration {
     @Bean
     public AuthTokenValidator validator() {
         try {
-            return new AuthTokenValidatorBuilder()
+            AuthTokenValidatorBuilder validatorBuilder = new AuthTokenValidatorBuilder()
                     .withSiteOrigin(URI.create(yamlConfig().getLocalOrigin()))
                     .withTrustedCertificateAuthorities(loadTrustedCACertificatesFromCerFiles())
-                    .withTrustedCertificateAuthorities(loadTrustedCACertificatesFromTrustStore())
-                    .build();
+                    .withTrustedCertificateAuthorities(loadTrustedCACertificatesFromTrustStore());
+            if (activeProfile.equals("dev")) {
+                // Enable support for ESTEID 2015 test certificates in development profile.
+                validatorBuilder = validatorBuilder.withNonceDisabledOcspUrls(URI.create("http://aia.demo.sk.ee/esteid2015"));
+            }
+            return validatorBuilder.build();
         } catch (JceException e) {
             throw new RuntimeException("Error building the Web eID auth token validator.", e);
         }
