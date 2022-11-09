@@ -52,8 +52,13 @@ public class WebEidAuthentication extends PreAuthenticatedAuthenticationToken im
     }
 
     private static String getPrincipalNameFromCertificate(X509Certificate userCertificate) throws CertificateEncodingException {
-        return Objects.requireNonNull(CertificateData.getSubjectGivenName(userCertificate)) + ' ' +
-                Objects.requireNonNull(CertificateData.getSubjectSurname(userCertificate));
+        try {
+            return Objects.requireNonNull(CertificateData.getSubjectGivenName(userCertificate)) + ' ' +
+                    Objects.requireNonNull(CertificateData.getSubjectSurname(userCertificate));
+        } catch (CertificateEncodingException e) {
+            // Organization certificates do not have given name and surname fields.
+            return Objects.requireNonNull(CertificateData.getSubjectCN(userCertificate));
+        }
     }
 
 }
