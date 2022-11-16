@@ -61,10 +61,10 @@ test_sudo
 # version   name    LTS   supported until
 # 18.04     bionic  LTS   2023-04
 # 20.04     focal   LTS   2025-04
-# 21.10     impish   -    2022-07
 # 22.04     jammy   LTS   2027-04
-LATEST_SUPPORTED_UBUNTU_CODENAME='jammy'
-LATEST_SUPPORTED_UBUNTU_VERSION='22.04'
+# 22.10     kinetic   -   2023-07
+LATEST_SUPPORTED_UBUNTU_CODENAME='kinetic'
+LATEST_SUPPORTED_UBUNTU_VERSION='22.10'
 
 # Check the distro and release.
 distro=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
@@ -80,6 +80,11 @@ case $distro in
           make_warn "Installing from ubuntu-bionic repository"
           make_install '18.04'
           ;;
+        bullseye)
+          make_warn "Debian $codename is not officially supported"
+          make_warn "Installing from ubuntu-focal repository"
+          make_install '20.04'
+          ;;
         *)
           make_fail "Debian $codename is not officially supported"
           ;;
@@ -91,10 +96,10 @@ case $distro in
          *) ;;
       esac
       case $codename in
-        utopic|vivid|wily|trusty|artful|cosmic|disco|xenial|eoan|groovy|hirsute)
+        utopic|vivid|wily|trusty|artful|cosmic|disco|xenial|eoan|groovy|hirsute|impish)
           make_fail "Ubuntu $codename is not officially supported"
           ;;
-        bionic|focal|impish|jammy)
+        bionic|focal|jammy|kinetic)
           make_install $release
           ;;
         *)
@@ -106,6 +111,10 @@ case $distro in
       ;;
    linuxmint)
       case $release in
+        21*)
+          make_warn "Linuxmint 21 is not officially supported"
+          make_install '22.04'
+          ;;
         20*)
           make_warn "Linuxmint 20 is not officially supported"
           make_install '20.04'
