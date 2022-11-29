@@ -34,9 +34,9 @@ make_install() {
   echo "Installing Web eID packages for Ubuntu $1"
   TMPDIR=`mktemp -d`
   cd $TMPDIR
-  VERSION='2.0.2'
+  VERSION='2.2.0'
   # BUILD=`[[ $1 == *0 ]] && echo 555 || echo 552`
-  BUILD='565'
+  BUILD='572'
   UBUNTU_VERSION=${1//./}
   wget "https://installer.id.ee/media/web-eid/Ubuntu/web-eid_${VERSION}.${BUILD}-${UBUNTU_VERSION}_all.deb"
   wget "https://installer.id.ee/media/web-eid/Ubuntu/web-eid-chrome_${VERSION}.${BUILD}-${UBUNTU_VERSION}_all.deb"
