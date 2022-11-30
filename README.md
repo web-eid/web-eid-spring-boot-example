@@ -59,6 +59,12 @@ Build and run the application with the following command in a terminal window:
 
 This will activate the default `dev` profile and launch the built-in Tomcat web server on port 8080 that was forwarded using _ngrok_ in step 1.
 
+If you want to use the `prod` profile, build and run the application with the following command:
+
+```sh
+./mvnw -Pprod -Dspring-boot.run.profiles=prod spring-boot:run
+```
+
 When the application has started, open the _ngrok_ HTTPS URL in your preferred web browser and follow instructions on the front page.
 
 ## Table of contents
