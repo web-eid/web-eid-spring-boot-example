@@ -59,7 +59,6 @@ test_root
 test_sudo
 
 # version   name    LTS   supported until
-# 18.04     bionic  LTS   2023-04
 # 20.04     focal   LTS   2025-04
 # 22.04     jammy   LTS   2027-04
 # 22.10     kinetic   -   2023-07
@@ -75,11 +74,6 @@ case $distro in
    debian)
       make_warn "Debian is not officially supported"
       case "$codename" in
-        buster)
-          make_warn "Debian $codename is not officially supported"
-          make_warn "Installing from ubuntu-bionic repository"
-          make_install '18.04'
-          ;;
         bullseye)
           make_warn "Debian $codename is not officially supported"
           make_warn "Installing from ubuntu-focal repository"
@@ -96,10 +90,10 @@ case $distro in
          *) ;;
       esac
       case $codename in
-        utopic|vivid|wily|trusty|artful|cosmic|disco|xenial|eoan|groovy|hirsute|impish)
+        utopic|vivid|wily|trusty|artful|cosmic|disco|xenial|eoan|groovy|hirsute|impish|bionic)
           make_fail "Ubuntu $codename is not officially supported"
           ;;
-        bionic|focal|jammy|kinetic)
+        focal|jammy|kinetic)
           make_install $release
           ;;
         *)
@@ -112,27 +106,23 @@ case $distro in
    linuxmint)
       case $release in
         21*)
-          make_warn "Linuxmint 21 is not officially supported"
+          make_warn "Linux Mint 21 is not officially supported"
           make_install '22.04'
           ;;
         20*)
-          make_warn "Linuxmint 20 is not officially supported"
+          make_warn "Linux Mint 20 is not officially supported"
           make_install '20.04'
           ;;
-        19*)
-          make_warn "LinuxMint 19 is not officially supported"
-          make_install '18.04'
-          ;;
         *)
-          make_fail "LinuxMint $release is not officially supported"
+          make_fail "Linux Mint $release is not officially supported"
           ;;
       esac
       ;;
    elementary*os|elementary)
       case $release in
-        5.*)
-          make_warn "Elementary OS 5 is not officially supported"
-          make_install '18.04'
+        7*)
+          make_warn "Elementary OS 7 is not officially supported"
+          make_install '22.04'
           ;;
         *)
           make_fail "Elementary OS $release is not officially supported"
@@ -141,10 +131,10 @@ case $distro in
       ;;
    pop)
       case $codename in
-        artful|cosmic|disco|eoan)
+        artful|cosmic|disco|eoan|bionic)
           make_fail "Pop!_OS $codename is not officially supported"
           ;;
-        bionic|focal)
+        focal)
           make_warn "Pop!_OS $codename is not officially supported"
           make_install $release
           ;;
