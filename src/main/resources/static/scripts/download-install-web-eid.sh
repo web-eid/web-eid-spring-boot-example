@@ -34,9 +34,9 @@ make_install() {
   echo "Installing Web eID packages for Ubuntu $1"
   TMPDIR=`mktemp -d`
   cd $TMPDIR
-  VERSION='2.2.0'
+  VERSION='2.3.0'
   # BUILD=`[[ $1 == *0 ]] && echo 555 || echo 552`
-  BUILD='572'
+  BUILD='619'
   UBUNTU_VERSION=${1//./}
   wget "https://installer.id.ee/media/web-eid/Ubuntu/web-eid_${VERSION}.${BUILD}-${UBUNTU_VERSION}_all.deb"
   wget "https://installer.id.ee/media/web-eid/Ubuntu/web-eid-chrome_${VERSION}.${BUILD}-${UBUNTU_VERSION}_all.deb"
@@ -78,6 +78,11 @@ case $distro in
           make_warn "Debian $codename is not officially supported"
           make_warn "Installing from ubuntu-focal repository"
           make_install '20.04'
+          ;;
+        bookworm)
+          make_warn "Debian $codename is not officially supported"
+          make_warn "Installing from ubuntu-kinetic repository"
+          make_install '22.10'
           ;;
         *)
           make_fail "Debian $codename is not officially supported"
@@ -134,7 +139,7 @@ case $distro in
         artful|cosmic|disco|eoan|bionic)
           make_fail "Pop!_OS $codename is not officially supported"
           ;;
-        focal)
+        focal|jammy)
           make_warn "Pop!_OS $codename is not officially supported"
           make_install $release
           ;;
