@@ -22,27 +22,33 @@
 
 package eu.webeid.example.service;
 
-import com.google.common.io.ByteStreams;
 import eu.webeid.example.config.YAMLConfig;
 import eu.webeid.example.security.WebEidAuthentication;
 import eu.webeid.example.service.dto.CertificateDTO;
 import eu.webeid.example.service.dto.DigestDTO;
 import eu.webeid.example.service.dto.FileDTO;
 import eu.webeid.example.service.dto.SignatureDTO;
+import eu.webeid.security.certificate.CertificateData;
 import org.apache.commons.io.FilenameUtils;
-import org.digidoc4j.*;
+import org.digidoc4j.Configuration;
+import org.digidoc4j.Container;
+import org.digidoc4j.ContainerBuilder;
+import org.digidoc4j.DataFile;
+import org.digidoc4j.DataToSign;
+import org.digidoc4j.Signature;
+import org.digidoc4j.SignatureBuilder;
+import org.digidoc4j.SignatureProfile;
 import org.digidoc4j.utils.TokenAlgorithmSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
-import eu.webeid.example.web.rest.SigningController;
-import eu.webeid.security.certificate.CertificateData;
 
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -55,7 +61,7 @@ public class SigningService {
     private static final String SESSION_ATTR_FILE = "file-to-sign";
     private static final String SESSION_ATTR_CONTAINER = "container-to-sign";
     private static final String SESSION_ATTR_DATA = "data-to-sign";
-    private static final Logger LOG = LoggerFactory.getLogger(SigningController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SigningService.class);
     private final Configuration signingConfiguration;
 
     ObjectFactory<HttpSession> httpSessionFactory;
@@ -145,7 +151,9 @@ public class SigningService {
 
     public ByteArrayResource getSignedContainerAsResource() throws IOException {
         Container signedContainer = (Container) Objects.requireNonNull(currentSession().getAttribute(SESSION_ATTR_CONTAINER));
-        return new ByteArrayResource(ByteStreams.toByteArray(signedContainer.saveAsStream()));
+        try (final InputStream stream = signedContainer.saveAsStream()) {
+            return new ByteArrayResource(stream.readAllBytes());
+        }
     }
 
     private Container getContainerToSign(FileDTO fileDTO) {
