@@ -104,7 +104,7 @@ class ExtensionUnavailableError extends Error {
 }
 
 var config = Object.freeze({
-    VERSION: "2.0.1",
+    VERSION: "2.0.2",
     EXTENSION_HANDSHAKE_TIMEOUT: 1000,
     NATIVE_APP_HANDSHAKE_TIMEOUT: 5 * 1000,
     DEFAULT_USER_INTERACTION_TIMEOUT: 2 * 60 * 1000,
@@ -243,7 +243,7 @@ class WebExtensionService {
             (_d = message.warnings) === null || _d === void 0 ? void 0 : _d.forEach((warning) => {
                 if (!this.loggedWarnings.includes(warning)) {
                     this.loggedWarnings.push(warning);
-                    console.warn(warning);
+                    console.warn(warning.replace(/\n|\r/g, ""));
                 }
             });
         }

@@ -22,7 +22,6 @@
 
 package eu.webeid.example.config;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.ObjectFactory;
 import eu.webeid.security.challenge.ChallengeNonce;
 import eu.webeid.security.challenge.ChallengeNonceStore;
@@ -51,7 +50,6 @@ public class SessionBackedChallengeNonceStore implements ChallengeNonceStore {
         return challengeNonce;
     }
 
-    @NotNull
     private HttpSession currentSession() {
         return httpSessionFactory.getObject();
     }
