@@ -25,20 +25,20 @@ package eu.webeid.example;
 import eu.webeid.example.testutil.Dates;
 import org.junit.jupiter.api.Test;
 
-import java.text.ParseException;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
+import static eu.webeid.example.testutil.Dates.getSigningDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DateMockingTest {
 
     @Test
-    void testDateMocking() throws ParseException {
-        final Date date = Dates.create("2020-04-14T13:36:49Z");
-        Dates.setMockedDate(date);
+    void testDateMocking() {
+        final ZonedDateTime signingDateTime = getSigningDateTime();
+        Dates.setMockedDate(signingDateTime);
 
         // Mocking native methods is unreliable, see https://github.com/jmockit/jmockit1/issues/689#issuecomment-702965484
-        assertThat(System.currentTimeMillis()).isEqualTo(date.getTime());
+        assertThat(System.currentTimeMillis()).isEqualTo(signingDateTime.toInstant().toEpochMilli());
     }
 
 }

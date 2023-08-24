@@ -22,27 +22,25 @@
 
 package eu.webeid.example.testutil;
 
-import com.fasterxml.jackson.databind.util.StdDateFormat;
 import mockit.Mock;
 import mockit.MockUp;
 
-import java.text.ParseException;
-import java.util.Date;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 public final class Dates {
-    private static final StdDateFormat STD_DATE_FORMAT = new StdDateFormat();
 
-    public static Date create(String iso8601Date) throws ParseException {
-        return STD_DATE_FORMAT.parse(iso8601Date);
+    public static ZonedDateTime getSigningDateTime() {
+        return ZonedDateTime.of(2020, 4, 14, 13, 36, 49, 0,
+                ZoneId.of("Europe/Tallinn"));
     }
 
-    public static void setMockedDate(Date mockedDate) {
+    public static void setMockedDate(ZonedDateTime mockedDateTime) {
         new MockUp<System>() {
             @Mock
             public long currentTimeMillis() {
-                return mockedDate.getTime();
+                return mockedDateTime.toInstant().toEpochMilli();
             }
         };
     }
-
 }

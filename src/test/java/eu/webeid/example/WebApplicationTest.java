@@ -101,7 +101,7 @@ public class WebApplicationTest {
         final MockHttpSession session = new MockHttpSession();
         session.setAttribute("challenge-nonce", new ChallengeNonce(ObjectMother.VALID_CHALLENGE_NONCE, DateAndTime.utcNow().plusMinutes(1)));
 
-        Dates.setMockedDate(Dates.create("2020-04-14T13:36:49Z"));
+        Dates.setMockedDate(Dates.getSigningDateTime());
 
         // Act and assert
         mvcBuilder.build().perform(get("/auth/challenge"));
