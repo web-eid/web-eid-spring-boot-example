@@ -20,7 +20,7 @@
 		<java.version>11</java.version>
 		<maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
 		<webeid.version>3.0.0</webeid.version>
-		<digidoc4j.version>4.3.0</digidoc4j.version>
+		<digidoc4j.version>5.1.0</digidoc4j.version>
 		<jmockit.version>1.44</jmockit.version>
 	</properties>
 
@@ -129,7 +129,7 @@
 		<repository>
 			<id>gitlab</id>
 			<url>https://gitlab.com/api/v4/projects/19948337/packages/maven</url>
-			<!-- Github Packages does not currently support public access, so disabled until it does.
+			<!-- GitHub Packages does not currently support public access, so disabled until it does.
 			     See https://github.com/orgs/community/discussions/26634
 			<id>github</id>
 			<url>https://maven.pkg.github.com/web-eid/web-eid-authtoken-validation-java</url>
