@@ -35,6 +35,7 @@ import org.digidoc4j.Container;
 import org.digidoc4j.ContainerBuilder;
 import org.digidoc4j.DataFile;
 import org.digidoc4j.DataToSign;
+import org.digidoc4j.DigestAlgorithm;
 import org.digidoc4j.Signature;
 import org.digidoc4j.SignatureBuilder;
 import org.digidoc4j.SignatureProfile;
@@ -101,25 +102,30 @@ public class SigningService {
 
         LOG.info("Preparing container for signing for file '{}'", containerName);
 
+        final DigestAlgorithm signatureDigestAlgorithm = TokenAlgorithmSupport.determineSignatureDigestAlgorithm(certificate);
+        final String digestAlgorithmName = signatureDigestAlgorithm.uri().getRef().toUpperCase();
+        if (!certificateDTO.getSupportedAlgorithmNames().contains(digestAlgorithmName)) {
+            throw new IllegalArgumentException("Determined signature digest algorithm '" + digestAlgorithmName +
+                    "' is not supported. Supported algorithms are: " + String.join(", ", certificateDTO.getSupportedAlgorithmNames()));
+        }
+
         DataToSign dataToSign = SignatureBuilder
                 .aSignature(containerToSign)
                 .withSignatureProfile(SignatureProfile.LT) // AIA OCSP is supported for signatures with LT or LTA profile.
                 .withSigningCertificate(certificate)
-                .withSignatureDigestAlgorithm(TokenAlgorithmSupport.determineSignatureDigestAlgorithm(certificate))
+                .withSignatureDigestAlgorithm(signatureDigestAlgorithm)
                 .buildDataToSign();
 
         currentSession().setAttribute(SESSION_ATTR_DATA, dataToSign);
 
         LOG.info("Successfully prepared container for signing for file '{}'", containerName);
 
-        final String digestAlgorithm = certificateDTO.getSupportedAlgorithmNames().contains("SHA384") ?
-                "SHA-384" : "SHA-256";
-
-        final byte[] digest = MessageDigest.getInstance(digestAlgorithm).digest(dataToSign.getDataToSign());
+        final byte[] digest = signatureDigestAlgorithm.getDssDigestAlgorithm().getMessageDigest()
+                .digest(dataToSign.getDataToSign());
 
         DigestDTO digestDTO = new DigestDTO();
         digestDTO.setHash(DatatypeConverter.printBase64Binary(digest));
-        digestDTO.setHashFunction(digestAlgorithm);
+        digestDTO.setHashFunction(digestAlgorithmName.replace("SHA", "SHA-")); // SHA256 -> SHA-256
 
         return digestDTO;
     }

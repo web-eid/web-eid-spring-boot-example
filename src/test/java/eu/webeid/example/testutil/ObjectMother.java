@@ -24,6 +24,7 @@ package eu.webeid.example.testutil;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.webeid.example.service.dto.SignatureAlgorithmDTO;
 import eu.webeid.security.authtoken.WebEidAuthToken;
 import org.apache.commons.lang3.ArrayUtils;
 import org.digidoc4j.DigestAlgorithm;
@@ -39,6 +40,7 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
+import java.util.List;
 
 public class ObjectMother {
 
@@ -94,6 +96,9 @@ public class ObjectMother {
     public static CertificateDTO mockPrepareRequest() {
         CertificateDTO certificateDTO = new CertificateDTO();
         certificateDTO.setCertificate(mockCertificateInBase64());
+        final SignatureAlgorithmDTO signatureAlgorithmDTO = new SignatureAlgorithmDTO();
+        signatureAlgorithmDTO.setHashAlgorithm("SHA256");
+        certificateDTO.setSupportedSignatureAlgorithms(List.of(signatureAlgorithmDTO));
         return certificateDTO;
     }
 
