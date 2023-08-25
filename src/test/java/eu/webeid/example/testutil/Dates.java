@@ -22,11 +22,13 @@
 
 package eu.webeid.example.testutil;
 
+import eu.europa.esig.dss.model.BLevelParameters;
 import mockit.Mock;
 import mockit.MockUp;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 public final class Dates {
 
@@ -35,11 +37,11 @@ public final class Dates {
                 ZoneId.of("Europe/Tallinn"));
     }
 
-    public static void setMockedDate(ZonedDateTime mockedDateTime) {
-        new MockUp<System>() {
+    public static void setMockedSignatureDate(ZonedDateTime mockedDateTime) {
+        new MockUp<BLevelParameters>() {
             @Mock
-            public long currentTimeMillis() {
-                return mockedDateTime.toInstant().toEpochMilli();
+            public Date getSigningDate() {
+                return Date.from(mockedDateTime.toInstant());
             }
         };
     }
