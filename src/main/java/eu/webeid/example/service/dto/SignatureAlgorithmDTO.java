@@ -22,18 +22,13 @@
 
 package eu.webeid.example.service.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class SignatureAlgorithmDTO {
 
-    @JsonProperty("crypto-algo")
     private String cryptoAlgorithm;
 
-    @JsonProperty("hash-algo")
-    private String hashAlgorithm;
+    private String hashFunction;
 
-    @JsonProperty("padding-algo")
-    private String paddingAlgorithm;
+    private String paddingScheme;
 
     public String getCryptoAlgorithm() {
         return cryptoAlgorithm;
@@ -43,19 +38,19 @@ public class SignatureAlgorithmDTO {
         this.cryptoAlgorithm = cryptoAlgorithm;
     }
 
-    public String getHashAlgorithm() {
-        return hashAlgorithm;
+    public String getHashFunction() {
+        return hashFunction;
     }
 
-    public void setHashAlgorithm(String hashAlgorithm) {
-        this.hashAlgorithm = hashAlgorithm;
+    public void setHashFunction(String hashFunction) {
+        this.hashFunction = hashFunction;
     }
 
-    public String getPaddingAlgorithm() {
-        return paddingAlgorithm;
+    public String getPaddingScheme() {
+        return paddingScheme;
     }
 
-    public void setPaddingAlgorithm(String paddingAlgorithm) {
-        this.paddingAlgorithm = paddingAlgorithm;
+    public void setPaddingScheme(String paddingScheme) {
+        this.paddingScheme = paddingScheme;
     }
 }

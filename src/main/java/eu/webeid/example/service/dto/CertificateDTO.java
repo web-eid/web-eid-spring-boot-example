@@ -22,8 +22,6 @@
 
 package eu.webeid.example.service.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.cert.CertificateException;
@@ -62,10 +60,10 @@ public class CertificateDTO {
         return (X509Certificate) cf.generateCertificate(inStream);
     }
 
-    public List<String> getSupportedAlgorithmNames() {
+    public List<String> getSupportedHashFunctionNames() {
         return supportedSignatureAlgorithms == null ? new ArrayList<>() : supportedSignatureAlgorithms
                 .stream()
-                .map(SignatureAlgorithmDTO::getHashAlgorithm)
+                .map(SignatureAlgorithmDTO::getHashFunction)
                 .distinct()
                 .collect(Collectors.toList());
     }
