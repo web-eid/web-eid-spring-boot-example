@@ -50,7 +50,6 @@ import javax.servlet.http.HttpSession;
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -103,10 +102,11 @@ public class SigningService {
         LOG.info("Preparing container for signing for file '{}'", containerName);
 
         final DigestAlgorithm signatureDigestAlgorithm = TokenAlgorithmSupport.determineSignatureDigestAlgorithm(certificate);
-        final String digestAlgorithmName = signatureDigestAlgorithm.uri().getRef().toUpperCase();
-        if (!certificateDTO.getSupportedAlgorithmNames().contains(digestAlgorithmName)) {
+        final String digestAlgorithmName = signatureDigestAlgorithm.uri().getRef()
+                .toUpperCase().replace("SHA", "SHA-"); // SHA256 -> SHA-256
+        if (!certificateDTO.getSupportedHashFunctionNames().contains(digestAlgorithmName)) {
             throw new IllegalArgumentException("Determined signature digest algorithm '" + digestAlgorithmName +
-                    "' is not supported. Supported algorithms are: " + String.join(", ", certificateDTO.getSupportedAlgorithmNames()));
+                    "' is not supported. Supported algorithms are: " + String.join(", ", certificateDTO.getSupportedHashFunctionNames()));
         }
 
         DataToSign dataToSign = SignatureBuilder
@@ -125,7 +125,7 @@ public class SigningService {
 
         DigestDTO digestDTO = new DigestDTO();
         digestDTO.setHash(DatatypeConverter.printBase64Binary(digest));
-        digestDTO.setHashFunction(digestAlgorithmName.replace("SHA", "SHA-")); // SHA256 -> SHA-256
+        digestDTO.setHashFunction(digestAlgorithmName);
 
         return digestDTO;
     }
