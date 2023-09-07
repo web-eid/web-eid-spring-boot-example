@@ -97,7 +97,9 @@ public class ObjectMother {
         CertificateDTO certificateDTO = new CertificateDTO();
         certificateDTO.setCertificate(mockCertificateInBase64());
         final SignatureAlgorithmDTO signatureAlgorithmDTO = new SignatureAlgorithmDTO();
+        signatureAlgorithmDTO.setCryptoAlgorithm("RSA");
         signatureAlgorithmDTO.setHashFunction("SHA-256");
+        signatureAlgorithmDTO.setPaddingScheme("PKCS1.5");
         certificateDTO.setSupportedSignatureAlgorithms(List.of(signatureAlgorithmDTO));
         return certificateDTO;
     }
