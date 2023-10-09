@@ -81,7 +81,7 @@ case $distro in
           ;;
         bookworm)
           make_warn "Debian $codename is not officially supported"
-          make_warn "Installing from ubuntu-kinetic repository"
+          make_warn "Installing from ubuntu-jammy repository"
           make_install '22.04'
           ;;
         *)
