@@ -37,6 +37,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -98,7 +99,7 @@ public class WebApplicationTest {
             }
         };
 
-        final MockHttpSession session = new MockHttpSession();
+        MockHttpSession session = new MockHttpSession();
         session.setAttribute("challenge-nonce", new ChallengeNonce(ObjectMother.VALID_CHALLENGE_NONCE, DateAndTime.utcNow().plusMinutes(1)));
 
         Dates.setMockedSignatureDate(Dates.getSigningDateTime());
@@ -106,7 +107,9 @@ public class WebApplicationTest {
         // Act and assert
         mvcBuilder.build().perform(get("/auth/challenge"));
 
-        MockHttpServletResponse response = HttpHelper.login(mvcBuilder, session, ObjectMother.mockAuthToken());
+        MvcResult result = HttpHelper.login(mvcBuilder, session, ObjectMother.mockAuthToken());
+        session = (MockHttpSession) result.getRequest().getSession();
+        MockHttpServletResponse response = result.getResponse();
         assertEquals("{\"sub\":\"JAAK-KRISTJAN JÕEORG\",\"auth\":[\"ROLE_USER\"]}", response.getContentAsString());
 
         /* Example how to test file upload.

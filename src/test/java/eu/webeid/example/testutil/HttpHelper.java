@@ -26,6 +26,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder;
 import eu.webeid.example.security.dto.AuthTokenDTO;
@@ -38,7 +39,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 public class HttpHelper {
 
-    public static MockHttpServletResponse login(DefaultMockMvcBuilder mvcBuilder, MockHttpSession session, AuthTokenDTO authTokenDTO) throws Exception {
+    public static MvcResult login(DefaultMockMvcBuilder mvcBuilder, MockHttpSession session, AuthTokenDTO authTokenDTO) throws Exception {
         // @formatter:off
         return mvcBuilder
                 .build()
@@ -47,8 +48,7 @@ public class HttpHelper {
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(ObjectMother.toJson(authTokenDTO)))
-                .andReturn()
-                .getResponse();
+                .andReturn();
         // @formatter:on
     }
 
