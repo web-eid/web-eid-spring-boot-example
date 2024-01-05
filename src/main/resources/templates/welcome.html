@@ -59,17 +59,23 @@
     const fileNameText = document.querySelector("#file-name");
     const exampleDocument = document.querySelector("#example-document");
 
+    const csrfToken = document.querySelector('#csrftoken').content;
+    const csrfHeaderName = document.querySelector('#csrfheadername').content;
+
     document.querySelector("#webeid-logout-button").addEventListener("click", async () => {
-        await fetch("/logout");
+        await fetch("/logout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                [csrfHeaderName]: csrfToken
+            }
+        });
         window.location.href = "/";
     });
 
     downloadButton.addEventListener("click", async () => {
         window.location.href = "/sign/download";
     });
-
-    const csrfToken = document.querySelector('#csrftoken').content;
-    const csrfHeaderName = document.querySelector('#csrfheadername').content;
 
     const lang = new URLSearchParams(window.location.search).get("lang") || "en";
 
