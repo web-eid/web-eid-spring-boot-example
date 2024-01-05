@@ -39,6 +39,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy;
 
 public class WebEidAjaxLoginProcessingFilter extends AbstractAuthenticationProcessingFilter {
     private static final Logger LOG = LoggerFactory.getLogger(WebEidAjaxLoginProcessingFilter.class);
@@ -51,6 +52,7 @@ public class WebEidAjaxLoginProcessingFilter extends AbstractAuthenticationProce
         this.setAuthenticationManager(authenticationManager);
         this.setAuthenticationSuccessHandler(new AjaxAuthenticationSuccessHandler());
         this.setAuthenticationFailureHandler(new AjaxAuthenticationFailureHandler());
+        setSessionAuthenticationStrategy(new SessionFixationProtectionStrategy());
     }
 
     @Override
