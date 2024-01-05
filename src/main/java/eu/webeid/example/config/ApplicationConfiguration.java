@@ -64,8 +64,6 @@ public class ApplicationConfiguration extends WebSecurityConfigurerAdapter imple
             .authenticated()
          .and()
             .logout()
-            .logoutUrl("/logout")
-            .deleteCookies("JSESSIONID")
             .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
          .and()
             .headers()
