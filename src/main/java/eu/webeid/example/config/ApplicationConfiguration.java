@@ -24,12 +24,14 @@ package eu.webeid.example.config;
 
 import eu.webeid.example.security.AuthTokenDTOAuthenticationProvider;
 import eu.webeid.example.security.WebEidAjaxLoginProcessingFilter;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -37,30 +39,32 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
-public class ApplicationConfiguration extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
+@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
+public class ApplicationConfiguration implements WebMvcConfigurer {
     final AuthTokenDTOAuthenticationProvider authTokenDTOAuthenticationProvider;
 
     public ApplicationConfiguration(AuthTokenDTOAuthenticationProvider authTokenDTOAuthenticationProvider) {
         this.authTokenDTOAuthenticationProvider = authTokenDTOAuthenticationProvider;
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) {
-        authenticationManagerBuilder.authenticationProvider(authTokenDTOAuthenticationProvider);
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // @formatter:off
         http
+            .authenticationProvider(authTokenDTOAuthenticationProvider)
             .addFilterBefore(
-                    new WebEidAjaxLoginProcessingFilter("/auth/login", authenticationManager()),
+                    new WebEidAjaxLoginProcessingFilter("/auth/login",
+                            authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))),
                     UsernamePasswordAuthenticationFilter.class)
-            .authorizeRequests()
-            .antMatchers("/auth/challenge", "/auth/login", "/")
+            .authorizeHttpRequests()
+            .requestMatchers("/auth/challenge", "/auth/login", "/")
             .permitAll()
-            .antMatchers("/welcome")
+            .requestMatchers("/welcome")
             .authenticated()
          .and()
             .logout()
@@ -68,6 +72,7 @@ public class ApplicationConfiguration extends WebSecurityConfigurerAdapter imple
          .and()
             .headers()
                 .frameOptions().sameOrigin();
+        return http.build();
         // @formatter:on
     }
 
