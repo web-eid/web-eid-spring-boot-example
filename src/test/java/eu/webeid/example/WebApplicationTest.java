@@ -59,7 +59,7 @@ public class WebApplicationTest {
     private WebApplicationContext context;
 
     @Autowired
-    private javax.servlet.Filter[] springSecurityFilterChain;
+    private jakarta.servlet.Filter[] springSecurityFilterChain;
 
     private static DefaultMockMvcBuilder mvcBuilder;
 

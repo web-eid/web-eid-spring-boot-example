@@ -26,7 +26,7 @@ import org.springframework.beans.factory.ObjectFactory;
 import eu.webeid.security.challenge.ChallengeNonce;
 import eu.webeid.security.challenge.ChallengeNonceStore;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 public class SessionBackedChallengeNonceStore implements ChallengeNonceStore {
 
