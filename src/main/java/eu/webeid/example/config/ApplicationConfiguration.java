@@ -31,6 +31,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
@@ -54,28 +55,18 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // @formatter:off
-        http
-            .authenticationProvider(authTokenDTOAuthenticationProvider)
-            .addFilterBefore(
-                    new WebEidAjaxLoginProcessingFilter("/auth/login",
-                            authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))),
-                    UsernamePasswordAuthenticationFilter.class)
-            .authorizeHttpRequests()
-            .requestMatchers("/auth/challenge", "/auth/login", "/")
-            .permitAll()
-            .requestMatchers("/welcome")
-            .authenticated()
-         .and()
-            .logout()
-            .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
-         .and()
-            .headers()
-                .frameOptions().sameOrigin();
-        return http.build();
-        // @formatter:on
+        return http
+                .authenticationProvider(authTokenDTOAuthenticationProvider)
+                .addFilterBefore(
+                        new WebEidAjaxLoginProcessingFilter("/auth/login",
+                                authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))),
+                        UsernamePasswordAuthenticationFilter.class)
+                .logout(logout -> logout.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler()))
+                .headers(headers -> headers.frameOptions(options -> options.sameOrigin()))
+                .build();
     }
 
+    @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("index");
         registry.addViewController("/welcome").setViewName("welcome");
