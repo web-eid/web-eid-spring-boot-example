@@ -31,10 +31,11 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -43,9 +44,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class ApplicationConfiguration implements WebMvcConfigurer {
     final AuthTokenDTOAuthenticationProvider authTokenDTOAuthenticationProvider;
+    final HttpSessionSecurityContextRepository repo;
 
     public ApplicationConfiguration(AuthTokenDTOAuthenticationProvider authTokenDTOAuthenticationProvider) {
         this.authTokenDTOAuthenticationProvider = authTokenDTOAuthenticationProvider;
+        repo = new HttpSessionSecurityContextRepository();
     }
 
     @Bean
@@ -53,13 +56,18 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    @Bean SecurityContextRepository securityContextRepository() {
+        return repo;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        AuthenticationManager manager = authenticationManager(http.getSharedObject(AuthenticationConfiguration.class));
+        SecurityContextRepository repo = securityContextRepository();
         return http
                 .authenticationProvider(authTokenDTOAuthenticationProvider)
                 .addFilterBefore(
-                        new WebEidAjaxLoginProcessingFilter("/auth/login",
-                                authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))),
+                        new WebEidAjaxLoginProcessingFilter("/auth/login", manager, repo),
                         UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler()))
                 .headers(headers -> headers.frameOptions(options -> options.sameOrigin()))

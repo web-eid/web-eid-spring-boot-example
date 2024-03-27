@@ -24,6 +24,8 @@ package eu.webeid.example.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -37,22 +39,27 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy;
+import org.springframework.security.web.context.SecurityContextRepository;
 
 public class WebEidAjaxLoginProcessingFilter extends AbstractAuthenticationProcessingFilter {
     private static final Logger LOG = LoggerFactory.getLogger(WebEidAjaxLoginProcessingFilter.class);
+    private final SecurityContextRepository repo;
 
     public WebEidAjaxLoginProcessingFilter(
         String defaultFilterProcessesUrl,
-        AuthenticationManager authenticationManager
+        AuthenticationManager authenticationManager,
+        SecurityContextRepository repo
     ) {
         super(defaultFilterProcessesUrl);
         this.setAuthenticationManager(authenticationManager);
         this.setAuthenticationSuccessHandler(new AjaxAuthenticationSuccessHandler());
         this.setAuthenticationFailureHandler(new AjaxAuthenticationFailureHandler());
         setSessionAuthenticationStrategy(new SessionFixationProtectionStrategy());
+        this.repo = repo;
     }
 
     @Override
@@ -75,5 +82,12 @@ public class WebEidAjaxLoginProcessingFilter extends AbstractAuthenticationProce
         final PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(null, authTokenDTO);
         LOG.info("attemptAuthentication(): Calling authentication manager");
         return getAuthenticationManager().authenticate(token);
+    }
+
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+        super.successfulAuthentication(request, response, chain, authResult); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+        //SecurityContextHolder.setContext(securityContext);
+        repo.saveContext(SecurityContextHolder.getContext(), request, response);
     }
 }
