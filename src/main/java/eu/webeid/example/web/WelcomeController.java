@@ -29,7 +29,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.security.Principal;
 
 import static eu.webeid.example.security.AuthTokenDTOAuthenticationProvider.ROLE_USER;

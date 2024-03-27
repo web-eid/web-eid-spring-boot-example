@@ -20,38 +20,18 @@
  * SOFTWARE.
  */
 
-package eu.webeid.example.config;
+package eu.webeid.example.web;
 
-import org.springframework.beans.factory.ObjectFactory;
-import eu.webeid.security.challenge.ChallengeNonce;
-import eu.webeid.security.challenge.ChallengeNonceStore;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
-import jakarta.servlet.http.HttpSession;
-
-public class SessionBackedChallengeNonceStore implements ChallengeNonceStore {
-
-    private static final String CHALLENGE_NONCE_KEY = "challenge-nonce";
-
-    final ObjectFactory<HttpSession> httpSessionFactory;
-
-    public SessionBackedChallengeNonceStore(ObjectFactory<HttpSession> httpSessionFactory) {
-        this.httpSessionFactory = httpSessionFactory;
+@Controller
+public class IndexController {
+    @GetMapping("/")
+    public String welcome(Model model, HttpServletRequest request) {
+        model.addAttribute("serverName", request.getServerName());
+        return "index";
     }
-
-    @Override
-    public void put(ChallengeNonce challengeNonce) {
-        currentSession().setAttribute(CHALLENGE_NONCE_KEY, challengeNonce);
-    }
-
-    @Override
-    public ChallengeNonce getAndRemoveImpl() {
-        final ChallengeNonce challengeNonce = (ChallengeNonce) currentSession().getAttribute(CHALLENGE_NONCE_KEY);
-        currentSession().removeAttribute(CHALLENGE_NONCE_KEY);
-        return challengeNonce;
-    }
-
-    private HttpSession currentSession() {
-        return httpSessionFactory.getObject();
-    }
-
 }
