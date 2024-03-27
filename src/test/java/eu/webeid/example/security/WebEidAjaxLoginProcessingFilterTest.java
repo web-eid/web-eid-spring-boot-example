@@ -12,6 +12,7 @@ import java.io.StringReader;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import org.springframework.security.web.context.SecurityContextRepository;
 
 class WebEidAjaxLoginProcessingFilterTest {
 
@@ -31,9 +32,10 @@ class WebEidAjaxLoginProcessingFilterTest {
         when(request.getReader()).thenReturn(new BufferedReader(new StringReader(AUTH_TOKEN)));
 
         final AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
+        final SecurityContextRepository repo = mock(SecurityContextRepository.class);
 
         assertDoesNotThrow(() ->
-                new WebEidAjaxLoginProcessingFilter("/auth/login", authenticationManager)
+                new WebEidAjaxLoginProcessingFilter("/auth/login", authenticationManager, repo)
                         .attemptAuthentication(request, response));
     }
 }
