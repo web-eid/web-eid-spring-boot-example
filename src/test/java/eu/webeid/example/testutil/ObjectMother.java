@@ -33,7 +33,7 @@ import eu.webeid.example.security.dto.AuthTokenDTO;
 import eu.webeid.example.service.dto.CertificateDTO;
 import eu.webeid.example.service.dto.SignatureDTO;
 
-import javax.xml.bind.DatatypeConverter;
+import jakarta.xml.bind.DatatypeConverter;
 import java.io.FileInputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;

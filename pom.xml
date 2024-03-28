@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.15</version>
+		<version>3.1.9</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.webeid.example</groupId>
@@ -17,10 +17,10 @@
 	</description>
 
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 		<maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
 		<webeid.version>3.0.0</webeid.version>
-		<digidoc4j.version>5.2.0</digidoc4j.version>
+		<digidoc4j.version>5.3.0</digidoc4j.version>
 		<jmockit.version>1.44</jmockit.version>
 	</properties>
 

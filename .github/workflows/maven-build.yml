@@ -7,19 +7,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: zulu
-          java-version: 11
+          java-version: 17
 
       - name: Cache Maven packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2
-          key: ${{ runner.os }}-m2-v11-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2-v11-${{ secrets.CACHE_VERSION }}
+          key: ${{ runner.os }}-m2-v17-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2-v17-${{ secrets.CACHE_VERSION }}
 
       - name: Build
         run: mvn --batch-mode compile

@@ -4,14 +4,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.StringReader;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import org.springframework.security.web.context.SecurityContextRepository;
 
 class WebEidAjaxLoginProcessingFilterTest {
 
@@ -31,9 +32,10 @@ class WebEidAjaxLoginProcessingFilterTest {
         when(request.getReader()).thenReturn(new BufferedReader(new StringReader(AUTH_TOKEN)));
 
         final AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
+        final SecurityContextRepository securityContextRepository = mock(SecurityContextRepository.class);
 
         assertDoesNotThrow(() ->
-                new WebEidAjaxLoginProcessingFilter("/auth/login", authenticationManager)
+                new WebEidAjaxLoginProcessingFilter("/auth/login", authenticationManager, securityContextRepository)
                         .attemptAuthentication(request, response));
     }
 }
