@@ -46,8 +46,8 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpSession;
-import javax.xml.bind.DatatypeConverter;
+import jakarta.servlet.http.HttpSession;
+import jakarta.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;

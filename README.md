@@ -49,7 +49,7 @@ You can specify the profile as a command-line argument to the Maven wrapper comm
 
 ### 5. Run the application
 
-Spring Boot web applications can be run from the command-line. You need to have the Java Development Kit 8 installed for building the application package and running the application.
+Spring Boot web applications can be run from the command-line. You need to have the Java Development Kit 17 installed for building the application package and running the application.
 
 Build and run the application with the following command in a terminal window:
 
