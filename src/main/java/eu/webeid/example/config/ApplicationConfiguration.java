@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023 Estonian Information System Authority
+ * Copyright (c) 2020-2024 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,53 +24,52 @@ package eu.webeid.example.config;
 
 import eu.webeid.example.security.AuthTokenDTOAuthenticationProvider;
 import eu.webeid.example.security.WebEidAjaxLoginProcessingFilter;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
-public class ApplicationConfiguration extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
+@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
+public class ApplicationConfiguration implements WebMvcConfigurer {
     final AuthTokenDTOAuthenticationProvider authTokenDTOAuthenticationProvider;
+    final SecurityContextRepository securityContextRepository;
 
     public ApplicationConfiguration(AuthTokenDTOAuthenticationProvider authTokenDTOAuthenticationProvider) {
         this.authTokenDTOAuthenticationProvider = authTokenDTOAuthenticationProvider;
+        this.securityContextRepository = new HttpSessionSecurityContextRepository();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        AuthenticationManager manager = authenticationManager(http.getSharedObject(AuthenticationConfiguration.class));
+
+        return http
+                .authenticationProvider(authTokenDTOAuthenticationProvider)
+                .addFilterBefore(new WebEidAjaxLoginProcessingFilter("/auth/login", manager, securityContextRepository),
+                        UsernamePasswordAuthenticationFilter.class)
+                .logout(logout -> logout.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler()))
+                .headers(headers -> headers.frameOptions(options -> options.sameOrigin()))
+                .build();
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) {
-        authenticationManagerBuilder.authenticationProvider(authTokenDTOAuthenticationProvider);
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        // @formatter:off
-        http
-            .addFilterBefore(
-                    new WebEidAjaxLoginProcessingFilter("/auth/login", authenticationManager()),
-                    UsernamePasswordAuthenticationFilter.class)
-            .authorizeRequests()
-            .antMatchers("/auth/challenge", "/auth/login", "/")
-            .permitAll()
-            .antMatchers("/welcome")
-            .authenticated()
-         .and()
-            .logout()
-            .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
-         .and()
-            .headers()
-                .frameOptions().sameOrigin();
-        // @formatter:on
-    }
-
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("index");
         registry.addViewController("/welcome").setViewName("welcome");

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023 Estonian Information System Authority
+ * Copyright (c) 2020-2024 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,14 @@ package eu.webeid.example.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import eu.webeid.example.security.ajax.AjaxAuthenticationFailureHandler;
 import eu.webeid.example.security.ajax.AjaxAuthenticationSuccessHandler;
 import eu.webeid.example.security.dto.AuthTokenDTO;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -37,22 +39,27 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy;
+import org.springframework.security.web.context.SecurityContextRepository;
 
 public class WebEidAjaxLoginProcessingFilter extends AbstractAuthenticationProcessingFilter {
     private static final Logger LOG = LoggerFactory.getLogger(WebEidAjaxLoginProcessingFilter.class);
+    private final SecurityContextRepository securityContextRepository;
 
     public WebEidAjaxLoginProcessingFilter(
         String defaultFilterProcessesUrl,
-        AuthenticationManager authenticationManager
+        AuthenticationManager authenticationManager,
+        SecurityContextRepository securityContextRepository
     ) {
         super(defaultFilterProcessesUrl);
         this.setAuthenticationManager(authenticationManager);
         this.setAuthenticationSuccessHandler(new AjaxAuthenticationSuccessHandler());
         this.setAuthenticationFailureHandler(new AjaxAuthenticationFailureHandler());
         setSessionAuthenticationStrategy(new SessionFixationProtectionStrategy());
+        this.securityContextRepository = securityContextRepository;
     }
 
     @Override
@@ -75,5 +82,11 @@ public class WebEidAjaxLoginProcessingFilter extends AbstractAuthenticationProce
         final PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(null, authTokenDTO);
         LOG.info("attemptAuthentication(): Calling authentication manager");
         return getAuthenticationManager().authenticate(token);
+    }
+
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+        super.successfulAuthentication(request, response, chain, authResult); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+        securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
     }
 }

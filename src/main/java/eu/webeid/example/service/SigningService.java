@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023 Estonian Information System Authority
+ * Copyright (c) 2020-2024 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -46,8 +46,8 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpSession;
-import javax.xml.bind.DatatypeConverter;
+import jakarta.servlet.http.HttpSession;
+import jakarta.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;

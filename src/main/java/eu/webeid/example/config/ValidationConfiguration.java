@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023 Estonian Information System Authority
+ * Copyright (c) 2020-2024 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,7 +37,7 @@ import eu.webeid.security.exceptions.JceException;
 import eu.webeid.security.validator.AuthTokenValidator;
 import eu.webeid.security.validator.AuthTokenValidatorBuilder;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;

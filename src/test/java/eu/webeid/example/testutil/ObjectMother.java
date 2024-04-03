@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023 Estonian Information System Authority
+ * Copyright (c) 2020-2024 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@ import eu.webeid.example.security.dto.AuthTokenDTO;
 import eu.webeid.example.service.dto.CertificateDTO;
 import eu.webeid.example.service.dto.SignatureDTO;
 
-import javax.xml.bind.DatatypeConverter;
+import jakarta.xml.bind.DatatypeConverter;
 import java.io.FileInputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;

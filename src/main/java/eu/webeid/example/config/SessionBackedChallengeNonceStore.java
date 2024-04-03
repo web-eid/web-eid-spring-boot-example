@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023 Estonian Information System Authority
+ * Copyright (c) 2020-2024 Estonian Information System Authority
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@ import org.springframework.beans.factory.ObjectFactory;
 import eu.webeid.security.challenge.ChallengeNonce;
 import eu.webeid.security.challenge.ChallengeNonceStore;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 public class SessionBackedChallengeNonceStore implements ChallengeNonceStore {
 

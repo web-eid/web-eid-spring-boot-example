@@ -57,7 +57,7 @@
                         <li>on <b>Ubuntu Linux</b>, for Firefox and Chrome, download and execute the<br>
                             <a href="/scripts/download-install-web-eid.sh"><code>download-install-web-eid.sh</code></a>
                             script from the console with<br>
-                            <code>wget -O - https://<span th:text="${#httpServletRequest.serverName}"/>/scripts/download-install-web-eid.sh
+                            <code>wget -O - https://<span th:text="${serverName}"/>/scripts/download-install-web-eid.sh
                                 | bash</code><br>
                             <b>Note that Firefox is installed with Snap in Ubuntu 22.04 or later by default and as the
                                 Snap sandbox does not allow communication with the external native messaging host, Web

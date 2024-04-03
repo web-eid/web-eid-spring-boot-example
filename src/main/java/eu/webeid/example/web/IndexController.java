@@ -20,25 +20,18 @@
  * SOFTWARE.
  */
 
-package eu.webeid.example.service.dto;
+package eu.webeid.example.web;
 
-public class DigestDTO {
-    private String hash;
-    private String hashFunction;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
-    public String getHash() {
-        return hash;
-    }
-
-    public void setHash(String hash) {
-        this.hash = hash;
-    }
-
-    public String getHashFunction() {
-        return hashFunction;
-    }
-
-    public void setHashFunction(String hashFunction) {
-        this.hashFunction = hashFunction;
+@Controller
+public class IndexController {
+    @GetMapping("/")
+    public String welcome(Model model, HttpServletRequest request) {
+        model.addAttribute("serverName", request.getServerName());
+        return "index";
     }
 }
