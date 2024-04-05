@@ -29,8 +29,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import jakarta.validation.constraints.NotNull;
 import java.security.Principal;
+import java.util.Objects;
 
 import static eu.webeid.example.security.AuthTokenDTOAuthenticationProvider.ROLE_USER;
 
@@ -40,7 +40,8 @@ public class WelcomeController {
 
     @PreAuthorize("hasAuthority('" + ROLE_USER + "')")
     @GetMapping("welcome")
-    public String welcome(Model model, @NotNull Principal principal) {
+    public String welcome(Model model, Principal principal) {
+        Objects.requireNonNull(principal);
         LOG.info("Showing welcome page, logged in as principal={}", principal.getName());
         model.addAttribute("principalName", principal.getName());
         return "welcome";
