@@ -29,6 +29,8 @@ import eu.webeid.example.service.dto.DigestDTO;
 import eu.webeid.example.service.dto.FileDTO;
 import eu.webeid.example.service.dto.SignatureDTO;
 import eu.webeid.security.certificate.CertificateData;
+import jakarta.servlet.http.HttpSession;
+import jakarta.xml.bind.DatatypeConverter;
 import org.apache.commons.io.FilenameUtils;
 import org.digidoc4j.Configuration;
 import org.digidoc4j.Container;
@@ -44,10 +46,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
-import jakarta.servlet.http.HttpSession;
-import jakarta.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
@@ -55,7 +56,10 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Objects;
 
+import static eu.webeid.example.security.AuthTokenDTOAuthenticationProvider.ROLE_USER;
+
 @Service
+@Secured(ROLE_USER)
 public class SigningService {
 
     private static final String SESSION_ATTR_FILE = "file-to-sign";

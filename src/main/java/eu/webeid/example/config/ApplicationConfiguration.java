@@ -42,7 +42,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
+@EnableMethodSecurity(securedEnabled = true)
 public class ApplicationConfiguration implements WebMvcConfigurer {
     final AuthTokenDTOAuthenticationProvider authTokenDTOAuthenticationProvider;
     final SecurityContextRepository securityContextRepository;
