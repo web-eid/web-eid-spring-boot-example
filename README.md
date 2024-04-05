@@ -17,7 +17,7 @@ Web eID only works over a HTTPS connection with a trusted HTTPS certificate.
 You can either setup a reverse HTTPS proxy during development or, alternatively, configure
 HTTPS support directly in the bundled web server. HTTPS configuration is described in more detail in section _[HTTPS support](#https-support)_ below.
 
-You can use, for example, [_ngrok_](https://ngrok.com/) to get a reverse HTTPS proxy. Download _ngrok_ and run it in a terminal window by providing the protocol and Spring Boot application port arguments as follows:
+You can use, for example, [_ngrok_](https://ngrok.com/) or [_localtunnel_](https://theboroer.github.io/localtunnel-www/) to get a reverse HTTPS proxy. Download _ngrok_ and run it in a terminal window by providing the protocol and Spring Boot application port arguments as follows:
 
     ngrok http 8080
 
@@ -35,7 +35,7 @@ web-eid-auth-token:
 
 ### 3. Configure the trusted certificate authority certificates
 
-The algorithm, which performs the validation of the Web eID authentication token, needs to know which intermediate certificate authorities (CA) are trusted to issue the eID authentication certificates. CA certificates are loaded either from `.cer` files in the profile-specific subdirectory of the [`certs`resource directory](src/main/resources/certs) or the [truststore file](src/main/resources/certs/prod/trusted_certificates.jks). By default, Estonian eID test CA certificates are included in the `dev` profile and production CA certificates in the `prod` profile.
+The algorithm, which performs the validation of the Web eID authentication token, needs to know which intermediate certificate authorities (CA) are trusted to issue the eID authentication certificates. CA certificates are loaded either from `.cer` files in the profile-specific subdirectory of the [`certs` resource directory](src/main/resources/certs) or the [truststore file](src/main/resources/certs/prod/trusted_certificates.jks). By default, Estonian eID test CA certificates are included in the `dev` profile and production CA certificates in the `prod` profile.
 
 In case you need to provide your own CA certificates, either add the `.cer` files to the `src/main/resources/certs/{dev,prod}` profile-specific directory or add the certificates to the truststore file.
 

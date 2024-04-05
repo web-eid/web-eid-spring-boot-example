@@ -42,6 +42,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 
 import java.io.IOException;
@@ -53,15 +54,14 @@ public class WebEidAjaxLoginProcessingFilter extends AbstractAuthenticationProce
 
     public WebEidAjaxLoginProcessingFilter(
             String defaultFilterProcessesUrl,
-            AuthenticationManager authenticationManager,
-            SecurityContextRepository securityContextRepository
+            AuthenticationManager authenticationManager
     ) {
         super(defaultFilterProcessesUrl);
         this.setAuthenticationManager(authenticationManager);
         this.setAuthenticationSuccessHandler(new AjaxAuthenticationSuccessHandler());
         this.setAuthenticationFailureHandler(new AjaxAuthenticationFailureHandler());
         setSessionAuthenticationStrategy(new SessionFixationProtectionStrategy());
-        this.securityContextRepository = securityContextRepository;
+        this.securityContextRepository = new HttpSessionSecurityContextRepository();
     }
 
     @Override
