@@ -64,7 +64,7 @@ public class SigningService {
     private static final Logger LOG = LoggerFactory.getLogger(SigningService.class);
     private final Configuration signingConfiguration;
 
-    ObjectFactory<HttpSession> httpSessionFactory;
+    private final ObjectFactory<HttpSession> httpSessionFactory;
 
     public SigningService(ObjectFactory<HttpSession> httpSessionFactory, YAMLConfig yamlConfig) {
         this.httpSessionFactory = httpSessionFactory;
