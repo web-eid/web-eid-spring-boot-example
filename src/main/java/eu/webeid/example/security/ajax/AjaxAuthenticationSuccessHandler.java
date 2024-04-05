@@ -25,18 +25,16 @@ package eu.webeid.example.security.ajax;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 /**
  * Write custom response on having user successfully authenticated.
@@ -50,11 +48,11 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
 
     @Override
     public void onAuthenticationSuccess(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        Authentication authentication
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication
     )
-        throws IOException {
+            throws IOException {
         LOG.info("onAuthenticationSuccess(): {}", authentication);
 
         response.setStatus(HttpServletResponse.SC_OK);
@@ -64,23 +62,19 @@ public class AjaxAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
     }
 
     public static class AuthSuccessDTO {
-        private final ObjectMapper objectMapper = new ObjectMapper();
+        private static final ObjectWriter OBJECT_WRITER = new ObjectMapper().writerFor(AuthSuccessDTO.class);
 
         @JsonProperty("sub")
         private String sub;
 
         @JsonProperty("auth")
-        private List<String> auth;
+        private String auth;
 
         public static String asJson(Authentication authentication) throws JsonProcessingException {
             final AuthSuccessDTO dto = new AuthSuccessDTO();
             dto.sub = authentication.getName();
-            dto.auth = convertAuthorities(authentication.getAuthorities());
-            return dto.objectMapper.writeValueAsString(dto);
-        }
-
-        private static List<String> convertAuthorities(Collection<? extends GrantedAuthority> authorities) {
-            return authorities.stream().map(GrantedAuthority::toString).collect(Collectors.toList());
+            dto.auth = authentication.getAuthorities().toString();
+            return OBJECT_WRITER.writeValueAsString(dto);
         }
     }
 }

@@ -27,12 +27,13 @@ import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
 
-public class FileDTO {
+public class FileDTO implements Serializable {
     private static final String EXAMPLE_FILENAME = "example-for-signing.txt";
 
     private final String name;
