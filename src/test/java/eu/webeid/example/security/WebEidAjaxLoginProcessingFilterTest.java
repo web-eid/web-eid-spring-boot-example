@@ -1,18 +1,17 @@
 package eu.webeid.example.security;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.StringReader;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import org.springframework.security.web.context.SecurityContextRepository;
 
 class WebEidAjaxLoginProcessingFilterTest {
 
@@ -32,10 +31,9 @@ class WebEidAjaxLoginProcessingFilterTest {
         when(request.getReader()).thenReturn(new BufferedReader(new StringReader(AUTH_TOKEN)));
 
         final AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
-        final SecurityContextRepository securityContextRepository = mock(SecurityContextRepository.class);
 
         assertDoesNotThrow(() ->
-                new WebEidAjaxLoginProcessingFilter("/auth/login", authenticationManager, securityContextRepository)
+                new WebEidAjaxLoginProcessingFilter("/auth/login", authenticationManager)
                         .attemptAuthentication(request, response));
     }
 }

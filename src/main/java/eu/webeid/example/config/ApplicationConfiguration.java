@@ -26,7 +26,6 @@ import eu.webeid.example.security.AuthTokenDTOAuthenticationProvider;
 import eu.webeid.example.security.WebEidAjaxLoginProcessingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -35,8 +34,6 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -44,26 +41,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
 public class ApplicationConfiguration implements WebMvcConfigurer {
-    final AuthTokenDTOAuthenticationProvider authTokenDTOAuthenticationProvider;
-    final SecurityContextRepository securityContextRepository;
-
-    public ApplicationConfiguration(AuthTokenDTOAuthenticationProvider authTokenDTOAuthenticationProvider) {
-        this.authTokenDTOAuthenticationProvider = authTokenDTOAuthenticationProvider;
-        this.securityContextRepository = new HttpSessionSecurityContextRepository();
-    }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        AuthenticationManager manager = authenticationManager(http.getSharedObject(AuthenticationConfiguration.class));
-
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthTokenDTOAuthenticationProvider authTokenDTOAuthenticationProvider, AuthenticationConfiguration authConfig) throws Exception {
         return http
                 .authenticationProvider(authTokenDTOAuthenticationProvider)
-                .addFilterBefore(new WebEidAjaxLoginProcessingFilter("/auth/login", manager, securityContextRepository),
+                .addFilterBefore(new WebEidAjaxLoginProcessingFilter("/auth/login", authConfig.getAuthenticationManager()),
                         UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler()))
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
