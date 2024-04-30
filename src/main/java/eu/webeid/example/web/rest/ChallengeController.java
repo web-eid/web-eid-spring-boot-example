@@ -23,10 +23,10 @@
 package eu.webeid.example.web.rest;
 
 import eu.webeid.example.service.dto.ChallengeDTO;
+import eu.webeid.security.challenge.ChallengeNonceGenerator;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import eu.webeid.security.challenge.ChallengeNonceGenerator;
 
 @RestController
 @RequestMapping("auth")

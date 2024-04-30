@@ -23,15 +23,14 @@
 package eu.webeid.example.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
+import com.fasterxml.jackson.databind.ObjectReader;
 import eu.webeid.example.security.ajax.AjaxAuthenticationFailureHandler;
 import eu.webeid.example.security.ajax.AjaxAuthenticationSuccessHandler;
 import eu.webeid.example.security.dto.AuthTokenDTO;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -43,28 +42,31 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+
+import java.io.IOException;
 
 public class WebEidAjaxLoginProcessingFilter extends AbstractAuthenticationProcessingFilter {
     private static final Logger LOG = LoggerFactory.getLogger(WebEidAjaxLoginProcessingFilter.class);
+    private final ObjectReader OBJECT_READER = new ObjectMapper().readerFor(AuthTokenDTO.class);
     private final SecurityContextRepository securityContextRepository;
 
     public WebEidAjaxLoginProcessingFilter(
-        String defaultFilterProcessesUrl,
-        AuthenticationManager authenticationManager,
-        SecurityContextRepository securityContextRepository
+            String defaultFilterProcessesUrl,
+            AuthenticationManager authenticationManager
     ) {
         super(defaultFilterProcessesUrl);
         this.setAuthenticationManager(authenticationManager);
         this.setAuthenticationSuccessHandler(new AjaxAuthenticationSuccessHandler());
         this.setAuthenticationFailureHandler(new AjaxAuthenticationFailureHandler());
         setSessionAuthenticationStrategy(new SessionFixationProtectionStrategy());
-        this.securityContextRepository = securityContextRepository;
+        this.securityContextRepository = new HttpSessionSecurityContextRepository();
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-        throws AuthenticationException, IOException {
+            throws AuthenticationException, IOException {
         if (!HttpMethod.POST.name().equals(request.getMethod())) {
             LOG.warn("HttpMethod not supported: {}", request.getMethod());
             throw new AuthenticationServiceException("HttpMethod not supported: " + request.getMethod());
@@ -76,8 +78,7 @@ public class WebEidAjaxLoginProcessingFilter extends AbstractAuthenticationProce
         }
 
         LOG.info("attemptAuthentication(): Reading request body");
-        final ObjectMapper objectMapper = new ObjectMapper();
-        final AuthTokenDTO authTokenDTO = objectMapper.readValue(request.getReader(), AuthTokenDTO.class);
+        final AuthTokenDTO authTokenDTO = OBJECT_READER.readValue(request.getReader());
         LOG.info("attemptAuthentication(): Creating token");
         final PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(null, authTokenDTO);
         LOG.info("attemptAuthentication(): Calling authentication manager");
@@ -86,7 +87,7 @@ public class WebEidAjaxLoginProcessingFilter extends AbstractAuthenticationProce
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        super.successfulAuthentication(request, response, chain, authResult); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+        super.successfulAuthentication(request, response, chain, authResult);
         securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
     }
 }

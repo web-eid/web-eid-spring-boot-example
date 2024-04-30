@@ -23,9 +23,12 @@
 package eu.webeid.example.security;
 
 import eu.webeid.example.security.dto.AuthTokenDTO;
+import eu.webeid.security.authtoken.WebEidAuthToken;
+import eu.webeid.security.challenge.ChallengeNonceStore;
+import eu.webeid.security.exceptions.AuthTokenException;
+import eu.webeid.security.validator.AuthTokenValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -34,15 +37,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Component;
-import eu.webeid.security.authtoken.WebEidAuthToken;
-import eu.webeid.security.challenge.ChallengeNonceStore;
-import eu.webeid.security.exceptions.AuthTokenException;
-import eu.webeid.security.validator.AuthTokenValidator;
 
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,10 +53,13 @@ public class AuthTokenDTOAuthenticationProvider implements AuthenticationProvide
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthTokenDTOAuthenticationProvider.class);
 
-    @Autowired
-    private AuthTokenValidator tokenValidator;
-    @Autowired
-    private ChallengeNonceStore challengeNonceStore;
+    private final AuthTokenValidator tokenValidator;
+    private final ChallengeNonceStore challengeNonceStore;
+
+    public AuthTokenDTOAuthenticationProvider(AuthTokenValidator tokenValidator, ChallengeNonceStore challengeNonceStore) {
+        this.tokenValidator = tokenValidator;
+        this.challengeNonceStore = challengeNonceStore;
+    }
 
     @Override
     public Authentication authenticate(Authentication auth) throws AuthenticationException {
