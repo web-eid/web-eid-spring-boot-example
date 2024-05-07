@@ -90,15 +90,17 @@ public class SigningService {
      * @return data to be signed
      */
     public DigestDTO prepareContainer(CertificateDTO certificateDTO, WebEidAuthentication authentication) throws CertificateException, NoSuchAlgorithmException, IOException {
-        X509Certificate certificate = certificateDTO.toX509Certificate();
-        if (!authentication.getIdCode().equals(CertificateData.getSubjectIdCode(certificate))) {
+        final X509Certificate certificate = certificateDTO.toX509Certificate();
+        final String signingIdCode = CertificateData.getSubjectIdCode(certificate)
+                .orElseThrow(() -> new RuntimeException("Certificate does not contain subject ID code"));
+        if (!signingIdCode.equals(authentication.getIdCode())) {
             throw new IllegalArgumentException("Authenticated subject ID code differs from " +
                     "signing certificate subject ID code");
         }
 
-        FileDTO fileDTO = FileDTO.getExampleForSigningFromResources();
-        Container containerToSign = getContainerToSign(fileDTO);
-        String containerName = generateContainerName(fileDTO.getName());
+        final FileDTO fileDTO = FileDTO.getExampleForSigningFromResources();
+        final Container containerToSign = getContainerToSign(fileDTO);
+        final String containerName = generateContainerName(fileDTO.getName());
 
         currentSession().setAttribute(SESSION_ATTR_CONTAINER, containerToSign);
         currentSession().setAttribute(SESSION_ATTR_FILE, fileDTO);
@@ -113,7 +115,7 @@ public class SigningService {
                     "' is not supported. Supported algorithms are: " + String.join(", ", certificateDTO.getSupportedHashFunctionNames()));
         }
 
-        DataToSign dataToSign = SignatureBuilder
+        final DataToSign dataToSign = SignatureBuilder
                 .aSignature(containerToSign)
                 .withSignatureProfile(SignatureProfile.LT) // AIA OCSP is supported for signatures with LT or LTA profile.
                 .withSigningCertificate(certificate)
@@ -127,7 +129,7 @@ public class SigningService {
         final byte[] digest = signatureDigestAlgorithm.getDssDigestAlgorithm().getMessageDigest()
                 .digest(dataToSign.getDataToSign());
 
-        DigestDTO digestDTO = new DigestDTO();
+        final DigestDTO digestDTO = new DigestDTO();
         digestDTO.setHash(DatatypeConverter.printBase64Binary(digest));
         digestDTO.setHashFunction(digestAlgorithmName);
 

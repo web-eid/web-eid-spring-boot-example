@@ -22,15 +22,16 @@
 
 package eu.webeid.example.security;
 
+import eu.webeid.security.certificate.CertificateData;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-import eu.webeid.security.certificate.CertificateData;
 
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class WebEidAuthentication extends PreAuthenticatedAuthenticationToken implements Authentication {
 
@@ -38,7 +39,8 @@ public class WebEidAuthentication extends PreAuthenticatedAuthenticationToken im
 
     public static Authentication fromCertificate(X509Certificate userCertificate, List<GrantedAuthority> authorities) throws CertificateEncodingException {
         final String principalName = getPrincipalNameFromCertificate(userCertificate);
-        final String idCode = Objects.requireNonNull(CertificateData.getSubjectIdCode(userCertificate));
+        final String idCode = CertificateData.getSubjectIdCode(userCertificate)
+                .orElseThrow(() -> new CertificateEncodingException("Certificate does not contain subject ID code"));
         return new WebEidAuthentication(principalName, idCode, authorities);
     }
 
@@ -52,12 +54,15 @@ public class WebEidAuthentication extends PreAuthenticatedAuthenticationToken im
     }
 
     private static String getPrincipalNameFromCertificate(X509Certificate userCertificate) throws CertificateEncodingException {
-        try {
-            return Objects.requireNonNull(CertificateData.getSubjectGivenName(userCertificate)) + ' ' +
-                    Objects.requireNonNull(CertificateData.getSubjectSurname(userCertificate));
-        } catch (CertificateEncodingException e) {
+        final Optional<String> givenName = CertificateData.getSubjectGivenName(userCertificate);
+        final Optional<String> surname = CertificateData.getSubjectSurname(userCertificate);
+
+        if (givenName.isPresent() && surname.isPresent()) {
+            return givenName.get() + ' ' + surname.get();
+        } else {
             // Organization certificates do not have given name and surname fields.
-            return Objects.requireNonNull(CertificateData.getSubjectCN(userCertificate));
+            return CertificateData.getSubjectCN(userCertificate)
+                    .orElseThrow(() -> new CertificateEncodingException("Certificate does not contain subject CN"));
         }
     }
 
