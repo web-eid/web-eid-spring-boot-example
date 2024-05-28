@@ -17,7 +17,7 @@ Web eID only works over a HTTPS connection with a trusted HTTPS certificate.
 You can either setup a reverse HTTPS proxy during development or, alternatively, configure
 HTTPS support directly in the bundled web server. HTTPS configuration is described in more detail in section _[HTTPS support](#https-support)_ below.
 
-You can use, for example, [_ngrok_](https://ngrok.com/) or [_localtunnel_](https://theboroer.github.io/localtunnel-www/) to get a reverse HTTPS proxy. Download _ngrok_ and run it in a terminal window by providing the protocol and Spring Boot application port arguments as follows:
+You can use solutions like [_ngrok_](https://ngrok.com/), [_localtunnel_](https://theboroer.github.io/localtunnel-www/), or any other reverse HTTPS proxy tool. For example, with _ngrok_, download and run it in a terminal window by providing the protocol and the Spring Boot application port arguments as follows:
 
     ngrok http 8080
 
@@ -32,6 +32,8 @@ web-eid-auth-token:
     validation:
         local-origin: "https://<<NGROK HOSTNAME HERE>>"
 ```
+
+**Note that the origin URL must not end with a slash `/`**.
 
 ### 3. Configure the trusted certificate authority certificates
 
