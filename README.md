@@ -110,7 +110,7 @@ There is also a Docker Compose configuration file `docker-compose.yml` in the ro
 
 The source code folder `src` contains the application source code and resources in the `main` subdirectory and tests in the `test` subdirectory.
 
-The `src/main/java/org/webeid/example` directory contains the Spring Boot application Java class and the following subdirectories:
+The `src/main/java/eu/webeid/example` directory contains the Spring Boot application Java class and the following subdirectories:
 
 -   `config`: Spring and HTTP security configuration, Web eID authentication token validation library configuration, trusted CA certificates loading etc,
 -   `security`: Web eID authentication token validation library integration with Spring Security via an `AuthenticationProvider` and `AuthenticationProcessingFilter`,
@@ -144,13 +144,13 @@ Spring Security has CSRF protection enabled by default. Web eID requires CSRF pr
 
 ### Integration with Web eID components
 
-Detailed overview of Java code changes required for integrating Web eID authentication token validation is available in the [_web-eid-authtoken-validation-java_ library README](https://github.com/web-eid/web-eid-authtoken-validation-java/blob/main/README.md). There are instructions for configuring the nonce generator, trusted certificate authority certificates, authentication token validator, Spring Security authentication integration and REST endpoints. The corresponding Java code is in the `src/main/java/org/webeid/example/{config,security,web/rest}` directories.
+Detailed overview of Java code changes required for integrating Web eID authentication token validation is available in the [_web-eid-authtoken-validation-java_ library README](https://github.com/web-eid/web-eid-authtoken-validation-java/blob/main/README.md). There are instructions for configuring the nonce generator, trusted certificate authority certificates, authentication token validator, Spring Security authentication integration and REST endpoints. The corresponding Java code is in the `src/main/java/eu/webeid/example/{config,security,web/rest}` directories.
 
 A similar overview of JavaScript and HTML code changes required for authentication and digital signing with Web eID is available in the [web-eid.js library README](https://github.com/web-eid/web-eid.js/blob/main/README.md). The corresponding JavaScript and HTML code is in the `src/resources/{static,templates}` directories.
 
 ### Integration with DigiDoc4j components
 
-Java code examples that show how to create and sign data containers that hold signed file objects and digital signatures is available in the [DigiDoc4j wiki](https://github.com/open-eid/digidoc4j/wiki/Examples-of-using-it). Further information and links to the API documentation is available in the project [README](https://github.com/open-eid/digidoc4j/blob/master/README.md). The corresponding Java code is in the `src/main/java/org/webeid/example/{service,web/rest}` directories.
+Java code examples that show how to create and sign data containers that hold signed file objects and digital signatures is available in the [DigiDoc4j wiki](https://github.com/open-eid/digidoc4j/wiki/Examples-of-using-it). Further information and links to the API documentation is available in the project [README](https://github.com/open-eid/digidoc4j/blob/master/README.md). The corresponding Java code is in the `src/main/java/eu/webeid/example/{service,web/rest}` directories.
 
 #### Using the Certificates' _Authority Information Access_ (AIA) extension in DigiDoc4j
 
