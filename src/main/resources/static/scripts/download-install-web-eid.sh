@@ -62,8 +62,9 @@ test_sudo
 # 20.04     focal   LTS   2025-04
 # 22.04     jammy   LTS   2027-04
 # 23.10     mantic   -     2024-07
-LATEST_SUPPORTED_UBUNTU_CODENAME='mantic'
-LATEST_SUPPORTED_UBUNTU_VERSION='23.10'
+# 24.04     noble   -     2029-04
+LATEST_SUPPORTED_UBUNTU_CODENAME='noble'
+LATEST_SUPPORTED_UBUNTU_VERSION='24.04'
 
 # Check the distro and release.
 distro=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
@@ -98,7 +99,7 @@ case $distro in
         utopic|vivid|wily|trusty|artful|cosmic|disco|xenial|eoan|groovy|hirsute|impish|bionic|kinetic|lunar)
           make_fail "Ubuntu $codename is not officially supported"
           ;;
-        focal|jammy|mantic)
+        focal|jammy|mantic|noble)
           make_install $release
           ;;
         *)
