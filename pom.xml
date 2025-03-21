@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.4</version>
+		<version>3.4.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>eu.webeid.example</groupId>
 	<artifactId>web-eid-springboot-example</artifactId>
-	<version>3.1.0</version>
+	<version>3.1.1</version>
 	<name>web-eid-springboot-example</name>
 	<description>Example Spring Boot application that demonstrates how to use Web eID for authentication and digital
 		signing
@@ -18,11 +18,11 @@
 
 	<properties>
 		<java.version>17</java.version>
-		<maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
-		<webeid.version>3.1.0</webeid.version>
-		<digidoc4j.version>5.3.1</digidoc4j.version>
+		<maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+		<webeid.version>3.1.1</webeid.version>
+		<digidoc4j.version>6.0.0</digidoc4j.version>
 		<jmockit.version>1.44</jmockit.version>
-		<jib.version>3.4.2</jib.version>
+		<jib.version>3.4.5</jib.version>
 	</properties>
 
 	<dependencies>
