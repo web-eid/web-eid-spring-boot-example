@@ -119,8 +119,8 @@ test_sudo
 # version   name    LTS   supported until
 # 22.04     jammy   LTS   2027-04
 # 24.04     noble   LTS   2029-04
-# 24.10     oracular -    2025-07
-LATEST_SUPPORTED_UBUNTU_CODENAME='oracular'
+# 25.04     plucky -    2026-01
+LATEST_SUPPORTED_UBUNTU_CODENAME='plucky'
 
 # check if Debian or Ubuntu
 distro=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
@@ -134,31 +134,42 @@ case $distro in
       # Debian lacks https support for apt, by default
       sudo apt install apt-transport-https
       case "$codename" in
-         bookworm)
-	 	      make_warn "Debian $codename is not officially supported"
-	 	      make_warn "Installing from ubuntu-jammy repository"
-	 	      add_repository jammy
-	 	      ;;
+        trixie)
+          make_warn "Debian $codename is not officially supported"
+          make_warn "Trying to install packages from Ubuntu plucky repository"
+          add_repository plucky
+          ;;
+        bookworm)
+          make_warn "Debian $codename is not officially supported"
+          make_warn "Trying to install packages from Ubuntu jammy repository"
+          add_repository jammy
+          ;;
         *)
           make_fail "Debian $codename is not officially supported"
           ;;
       esac
       ;;
-   ubuntu|neon|zorin)
+   ubuntu|neon|zorin|tuxedo|pop)
       case $distro in
-         neon) make_warn "Neon is not officially supported; assuming that it is equivalent to Ubuntu" ;;
-         *) ;;
+        neon|zorin|tuxedo)
+          make_warn "$distro is not officially supported; assuming that it is equivalent to Ubuntu"
+          ;;
+        pop)
+          make_warn "Pop!_OS is not officially supported; assuming that it is equivalent to Ubuntu"
+          ;;
+        *)
+          ;;
       esac
       case $codename in
-        utopic|vivid|wily|trusty|artful|cosmic|disco|xenial|eoan|groovy|hirsute|impish|bionic|zorin|kinetic|lunar|mantic|focal)
+        utopic|vivid|wily|trusty|artful|cosmic|disco|xenial|eoan|groovy|hirsute|impish|bionic|zorin|kinetic|lunar|mantic|focal|oracular)
           make_fail "Ubuntu $codename is not officially supported"
           ;;
-        jammy|noble|oracular)
+        jammy|noble|plucky)
           add_repository $codename
           ;;
         *)
           make_warn "Ubuntu $codename is not officially supported"
-          make_warn "Trying to install package for Ubuntu ${LATEST_SUPPORTED_UBUNTU_CODENAME}"
+          make_warn "Trying to install packages from Ubuntu ${LATEST_SUPPORTED_UBUNTU_CODENAME} repository"
           add_repository ${LATEST_SUPPORTED_UBUNTU_CODENAME}
           ;;
       esac
@@ -167,10 +178,12 @@ case $distro in
       case $release in
 	    22*)
           make_warn "Linux Mint 22 is not officially supported"
+		  make_warn "Trying to install packages from Ubuntu noble repository"
           add_repository noble
           ;;
         21*)
           make_warn "Linux Mint 21 is not officially supported"
+		  make_warn "Trying to install packages from Ubuntu jammy repository"
           add_repository jammy
           ;;
         *)
@@ -182,26 +195,11 @@ case $distro in
       case $release in
         7*)
           make_warn "Elementary OS 7 is not officially supported"
+		  make_warn "Trying to install packages from Ubuntu jammy repository"
           add_repository jammy
           ;;
         *)
           make_fail "Elementary OS $release is not officially supported"
-          ;;
-      esac
-      ;;
-   pop)
-      case $codename in
-        artful|cosmic|disco|eoan|bionic|focal)
-          make_fail "Pop!_OS $codename is not officially supported"
-          ;;
-        jammy)
-          make_warn "Pop!_OS $codename is not officially supported"
-          add_repository $codename
-          ;;
-        *)
-          make_warn "Pop!_OS $codename is not officially supported"
-          make_warn "Trying to install package for Pop!_OS ${LATEST_SUPPORTED_UBUNTU_CODENAME}"
-          add_repository ${LATEST_SUPPORTED_UBUNTU_CODENAME}
           ;;
       esac
       ;;
