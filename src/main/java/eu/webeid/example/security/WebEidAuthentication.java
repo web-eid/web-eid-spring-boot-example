@@ -38,7 +38,7 @@ public class WebEidAuthentication extends PreAuthenticatedAuthenticationToken im
 
     public static Authentication fromCertificate(X509Certificate userCertificate, List<GrantedAuthority> authorities) throws CertificateEncodingException {
         final String principalName = getPrincipalNameFromCertificate(userCertificate);
-        final String idCode = Objects.requireNonNull(CertificateData.getSubjectIdCode(userCertificate));
+        final String idCode = CertificateData.getSubjectIdCode(userCertificate).orElseThrow(NullPointerException::new);
         return new WebEidAuthentication(principalName, idCode, authorities);
     }
 
@@ -53,11 +53,11 @@ public class WebEidAuthentication extends PreAuthenticatedAuthenticationToken im
 
     private static String getPrincipalNameFromCertificate(X509Certificate userCertificate) throws CertificateEncodingException {
         try {
-            return Objects.requireNonNull(CertificateData.getSubjectGivenName(userCertificate)) + ' ' +
-                    Objects.requireNonNull(CertificateData.getSubjectSurname(userCertificate));
-        } catch (CertificateEncodingException e) {
+            return CertificateData.getSubjectGivenName(userCertificate).orElseThrow(NullPointerException::new) + ' ' +
+                    CertificateData.getSubjectSurname(userCertificate).orElseThrow(NullPointerException::new);
+        } catch (CertificateEncodingException | NullPointerException e) {
             // Organization certificates do not have given name and surname fields.
-            return Objects.requireNonNull(CertificateData.getSubjectCN(userCertificate));
+            return CertificateData.getSubjectCN(userCertificate).orElseThrow(NullPointerException::new);
         }
     }
 

@@ -81,7 +81,7 @@ public class SigningService {
      */
     public DigestDTO prepareContainer(CertificateDTO certificateDTO, WebEidAuthentication authentication) throws CertificateException, NoSuchAlgorithmException, IOException {
         X509Certificate certificate = certificateDTO.toX509Certificate();
-        if (!authentication.getIdCode().equals(CertificateData.getSubjectIdCode(certificate))) {
+        if (!authentication.getIdCode().equals(CertificateData.getSubjectIdCode(certificate).orElseThrow(NullPointerException::new))) {
             throw new IllegalArgumentException("Authenticated subject ID code differs from " +
                     "signing certificate subject ID code");
         }
